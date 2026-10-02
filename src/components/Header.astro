@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import PhoneButton from './PhoneButton.astro';
+import { nav, cta } from '../data/home';
+---
+<header class="sticky top-0 z-50 border-b border-ink/5 bg-ivory-50/90 backdrop-blur-md">
+  <div class="container-x flex h-20 items-center justify-between gap-6">
+    <Logo />
+
+    <nav class="hidden xl:block" aria-label="Main">
+      <ul class="flex items-center">
+        {nav.map((l) => (
+          <li><a href={l.href} class="rounded-full px-3 py-2 text-[0.95rem] font-medium whitespace-nowrap text-ink/80 transition hover:bg-white hover:text-ink">{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <PhoneButton class="btn hidden px-0 text-[1.05rem] font-bold text-ink hover:text-terracotta-700 2xl:inline-flex" />
+      <a href="#estimate" class="btn-primary hidden px-6 sm:inline-flex">{cta.estimate} <Icon name="arrow" class="size-4" /></a>
+
+      <!-- Mobile menu: native <details>, works without JS -->
+      <details class="group relative xl:hidden" data-mobile-menu>
+        <summary class="grid size-12 cursor-pointer list-none place-items-center rounded-full border border-ink/10 bg-white [&::-webkit-details-marker]:hidden" aria-label="Open menu">
+          <Icon name="menu" class="size-5 group-open:hidden" />
+          <Icon name="x" class="hidden size-5 group-open:block" />
+        </summary>
+        <div class="absolute right-0 mt-3 w-[min(20rem,calc(100vw-2rem))] rounded-3xl bg-white p-3 shadow-[0_30px_60px_-30px_rgba(46,42,38,.45)]">
+          <ul>
+            {nav.map((l) => (
+              <li><a href={l.href} class="block rounded-2xl px-4 py-3 font-medium hover:bg-sage-100">{l.label}</a></li>
+            ))}
+          </ul>
+          <div class="mt-2 grid gap-2 border-t border-ink/5 pt-3">
+            <PhoneButton class="btn-outline w-full" />
+            <a href="#estimate" class="btn-primary w-full">{cta.estimate}</a>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Close the mobile menu after choosing a link
+  document.querySelectorAll<HTMLDetailsElement>('[data-mobile-menu]').forEach((menu) => {
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.removeAttribute('open')));
+  });
+</script>

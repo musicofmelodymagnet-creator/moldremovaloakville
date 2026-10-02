@@ -1,0 +1,564 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import Draft from '../components/Draft.astro';
+import PhoneButton from '../components/PhoneButton.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import SectionHead from '../components/SectionHead.astro';
+import HeroSlideshow from '../components/HeroSlideshow.astro';
+import MoistureDiagram from '../components/MoistureDiagram.astro';
+import RemovalCompare from '../components/RemovalCompare.astro';
+import { site, achievements, standards, pricing, reviews, timeAgo, pageLink, SHOW_DRAFT } from '../data/site';
+import {
+  meta, cta, hero, problems, services, servicesTitle, whyUs, utp1, utp2, checklist, typical,
+  process, local, pricingCopy, reviewsCopy, standardsNote, equipment, oakville, faqCopy, faq, finalCta,
+} from '../data/home';
+
+// ---- visibility rules (NO FAKE DATA) ----
+const shownAchievements = achievements.filter((a) => a.value || SHOW_DRAFT);
+const shownStandards = standards.filter((s) => s.verified || SHOW_DRAFT);
+const hasPrices = pricing.every((p) => p.price);
+const showPriceTable = hasPrices || SHOW_DRAFT;
+const showReviews = reviews.length > 0 || SHOW_DRAFT;
+
+// Только 3 варианта цвета для значков и эмблем: шалфей, терракота, золото
+const accents = ['bg-sage-100 text-sage-800', 'bg-terracotta-100 text-terracotta-800', 'bg-gold-100 text-gold-700'];
+// Те же 3 цвета для эмблем на тёмной полосе достижений
+const emblems = ['bg-sage-200 text-sage-900', 'bg-terracotta-100 text-terracotta-800', 'bg-gold-100 text-gold-700'];
+
+// ---- structured data (@graph) ----
+const ORG = `${site.url}/#organization`;
+const WEBSITE = `${site.url}/#website`;
+const PAGE = `${site.url}/#webpage`;
+const graph = [
+  { '@type': 'WebSite', '@id': WEBSITE, url: `${site.url}/`, name: site.name, inLanguage: 'en-CA', publisher: { '@id': ORG } },
+  {
+    // Реальный NAP есть → LocalBusiness-подтип (он же Organization). Без адреса — только Organization.
+    '@type': site.address ? 'HomeAndConstructionBusiness' : 'Organization',
+    '@id': ORG,
+    name: site.name,
+    url: `${site.url}/`,
+    logo: { '@type': 'ImageObject', url: `${site.url}/logo.png`, width: 512, height: 512 },
+    image: `${site.url}/og-image.png`,
+    ...(site.address
+      ? {
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: site.address.street,
+            addressLocality: site.address.locality,
+            addressRegion: site.address.region,
+            postalCode: site.address.postalCode,
+            addressCountry: site.address.country,
+          },
+        }
+      : {}),
+    ...(site.phone ? { telephone: site.phoneE164 ?? site.phone } : {}),
+    ...(site.email ? { email: site.email } : {}),
+    areaServed: { '@type': 'City', name: 'Oakville, Ontario' },
+    ...(site.sameAs.length ? { sameAs: site.sameAs } : {}),
+  },
+  {
+    '@type': 'WebPage',
+    '@id': PAGE,
+    url: `${site.url}/`,
+    name: meta.title,
+    description: meta.description,
+    isPartOf: { '@id': WEBSITE },
+    about: [{ '@type': 'Thing', name: 'Mold removal' }, { '@type': 'Thing', name: 'Mould remediation' }],
+    breadcrumb: { '@id': `${site.url}/#breadcrumb` },
+    inLanguage: 'en-CA',
+  },
+  {
+    '@type': 'Service',
+    '@id': `${site.url}/#service`,
+    name: 'Mold Removal Oakville',
+    serviceType: 'Mold Removal and Mould Remediation',
+    provider: { '@id': ORG },
+    areaServed: { '@type': 'City', name: 'Oakville, Ontario, Canada' },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: servicesTitle,
+      itemListElement: services.map((s) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.title, description: s.text } })),
+    },
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${site.url}/#faq`,
+    isPartOf: { '@id': WEBSITE },
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${site.url}/#breadcrumb`,
+    itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` }],
+  },
+];
+
+const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&output=embed';
+---
+<Layout title={meta.title} description={meta.description} graph={graph}>
+
+  <!-- ============ HERO ============ -->
+  <!--
+    Desktop: [H1 in one line] → [photo with lead overlaid | form] → [tagline + CTA | body text] → [trust panel]
+    Mobile (по ТЗ): H1 → photo → tagline + CTA → form → body text → trust
+  -->
+  <section class="bg-ivory-50 pt-8 pb-24 sm:pt-12 lg:pb-32" data-hero aria-labelledby="hero-title">
+    <div class="container-x grid gap-x-12 gap-y-8 lg:grid-cols-12 lg:gap-y-14">
+
+      <h1 id="hero-title" class="reveal order-1 font-display text-[clamp(1.85rem,7.3vw,6.4rem)] leading-none font-extrabold tracking-tight whitespace-nowrap lg:col-span-12">
+        Mold Removal <span class="text-terracotta-700">Oakville</span>
+      </h1>
+
+      <!-- Photo card; the lead line sits on the photo at the bottom -->
+      <div class="relative isolate order-2 aspect-[4/5] overflow-hidden rounded-[2rem] bg-sage-900 sm:aspect-[16/11] lg:col-span-8 lg:row-start-2 lg:aspect-auto lg:min-h-[600px]">
+        <HeroSlideshow slides={hero.slides} />
+        <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(24,29,22,.86)_0%,rgba(24,29,22,.42)_30%,rgba(24,29,22,0)_55%)]" aria-hidden="true"></div>
+        <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 sm:p-10">
+          <p class="reveal reveal-d1 max-w-xl font-display text-2xl leading-[1.15] font-extrabold text-white drop-shadow-[0_2px_18px_rgba(0,0,0,.4)] sm:text-4xl">{hero.lead}</p>
+          {hero.slides.length > 1 && (
+            <div class="flex shrink-0 flex-col items-end gap-3">
+              <div class="flex gap-2">
+                <button type="button" class="grid size-11 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/35" data-prev aria-label="Previous photo"><Icon name="chevron-left" class="size-5" /></button>
+                <button type="button" class="grid size-11 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/35" data-next aria-label="Next photo"><Icon name="chevron-right" class="size-5" /></button>
+              </div>
+              <div class="hidden gap-2 sm:flex">
+                {hero.slides.map((_, i) => (
+                  <button type="button" class="h-1.5 w-6 rounded-full bg-white/40 transition aria-[current=true]:w-10 aria-[current=true]:bg-white" data-dot aria-current={i === 0 ? 'true' : 'false'} aria-label={`Show photo ${i + 1}`}></button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <!-- Tagline + calls to action -->
+      <div class="order-3 lg:col-span-5 lg:row-start-3">
+        <p class="reveal reveal-d2 font-display text-3xl leading-[1.15] font-extrabold sm:text-4xl">{hero.tagline}</p>
+        <div class="reveal reveal-d3 mt-8 flex flex-wrap gap-3">
+          <PhoneButton label="call" class="btn-primary text-lg" />
+          <a href="#estimate" class="btn-outline text-lg lg:hidden">{cta.estimate} <Icon name="arrow" class="size-5" /></a>
+        </div>
+      </div>
+
+      <!-- Quote form -->
+      <div id="estimate" class="reveal reveal-d2 order-4 scroll-mt-28 self-start rounded-[2rem] bg-white p-6 shadow-[0_30px_70px_-40px_rgba(24,29,22,.45)] sm:p-9 lg:col-span-4 lg:col-start-9 lg:row-start-2">
+        <h2 class="font-display text-3xl font-extrabold">{cta.estimate}</h2>
+        <div class="mt-6"><QuoteForm variant="hero" /></div>
+      </div>
+
+      <!-- Body copy -->
+      <div class="order-5 space-y-5 text-[1.05rem] leading-relaxed text-ink-soft sm:text-lg lg:col-span-7 lg:col-start-6 lg:row-start-3 lg:border-l lg:border-ink/10 lg:pl-12">
+        {hero.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+
+      <!-- Trust panel -->
+      <div class="order-6 lg:col-span-12 lg:row-start-4">
+        <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-[1.75rem] bg-ink/8 sm:grid-cols-3 lg:grid-cols-6">
+          {hero.trust.map((t, i) => (
+            <li class="flex flex-col items-start gap-4 bg-white p-6 sm:p-7">
+              <span class:list={['grid size-11 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={t.icon} class="size-5" /></span>
+              <span class="text-[0.98rem] leading-snug font-bold">{t.label}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-6 flex max-w-4xl gap-3 text-sm leading-relaxed text-ink-soft">
+          <span class="mt-1.5 h-px w-6 shrink-0 bg-gold" aria-hidden="true"></span>{hero.note}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ACHIEVEMENT STRIP (only verified values in production) ============ -->
+  {shownAchievements.length > 0 && (
+    <section class="bg-sage-900 text-white" aria-label="Company credentials">
+      <ul class="container-x grid grid-cols-2 gap-y-12 py-16 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x lg:divide-white/10">
+        {shownAchievements.map((a, i) => (
+          <li class="flex flex-col items-center px-3 text-center">
+            <span class:list={['grid size-16 place-items-center rounded-full ring-1 ring-white/25 ring-offset-4 ring-offset-sage-900', emblems[i % emblems.length]]}>
+              <Icon name={a.icon} class="size-7" />
+            </span>
+            <p class="mt-5 font-display text-2xl leading-none font-extrabold text-gold"><Draft value={a.value} placeholder={a.draft} /></p>
+            <p class="mt-2 text-[0.95rem] leading-snug font-medium text-white/85">{a.label}</p>
+            {SHOW_DRAFT && !a.value && <p class="mt-2 text-[0.65rem] font-bold tracking-wider text-gold uppercase">Status: verify before publishing</p>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- ============ PROBLEMS WE SOLVE ============ -->
+  <section class="section" aria-labelledby="problems-title">
+    <div class="container-x grid gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:gap-24">
+      <div class="lg:sticky lg:top-32 lg:self-start">
+        <SectionHead id="problems-title" title={problems.title} intro={problems.intro} />
+        <a href="#estimate" class="btn-primary mt-10">{cta.estimate} <Icon name="arrow" class="size-4" /></a>
+      </div>
+      <ul class="grid gap-4 sm:grid-cols-2">
+        {problems.items.map((p, i) => (
+          <li class="flex gap-4 rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgba(46,42,38,.04)]">
+            <span class:list={['grid size-10 shrink-0 place-items-center rounded-full font-display text-sm font-bold', accents[i % accents.length]]}>{String(i + 1).padStart(2, '0')}</span>
+            <span class="self-center text-[1.05rem] leading-snug font-medium">{p}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ MAIN SERVICES ============ -->
+  <section id="services" class="section bg-sage-100" aria-labelledby="services-title">
+    <div class="container-x">
+      <SectionHead id="services-title" eyebrow="Main Services" title={servicesTitle} />
+      <div class="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {services.map((s, i) => {
+          const href = pageLink(s.page);
+          const wide = i === services.length - 1 && services.length % 3 === 2;
+          return (
+            <article class:list={['group flex flex-col overflow-hidden rounded-[1.75rem] bg-white shadow-[0_18px_50px_-30px_rgba(46,42,38,.3)]', wide && 'lg:col-span-2 lg:flex-row']}>
+              <div class:list={['aspect-[4/3] overflow-hidden', wide && 'lg:aspect-auto lg:w-1/2 lg:shrink-0']}><Photo image={s.image} alt={s.alt} sizes={wide ? '(min-width: 1024px) 40vw, 100vw' : '(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw'} /></div>
+              <div class:list={['flex flex-1 flex-col p-7 sm:p-8', wide && 'lg:justify-center lg:p-12']}>
+                <h3 class="text-2xl leading-tight font-extrabold">{href ? <a href={href} class="hover:text-terracotta-700">{s.title}</a> : s.title}</h3>
+                <p class="mt-4 leading-relaxed text-ink-soft">{s.text}</p>
+                {href && (
+                  <a href={href} class="mt-6 inline-flex items-center gap-2 font-semibold text-terracotta-700 hover:gap-3">{s.title} <Icon name="arrow" class="size-4" /></a>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY CHOOSE US ============ -->
+  <section id="why-us" class="section" aria-labelledby="why-title">
+    <div class="container-x">
+      <SectionHead id="why-title" eyebrow={whyUs.eyebrow} title={whyUs.title} center />
+      <div class="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {whyUs.items.map((w, i) => (
+          <div class="card">
+            <span class:list={['grid size-14 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={w.icon} class="size-7" /></span>
+            <h3 class="mt-7 text-2xl font-extrabold">{w.title}</h3>
+            <p class="mt-3 leading-relaxed text-ink-soft">{w.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ UTP 1 — MOISTURE PATH ============ -->
+  <section class="section bg-sage-100" aria-labelledby="utp1-title">
+    <div class="container-x grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
+      <div>
+        <SectionHead id="utp1-title" title={utp1.title} />
+        <div class="mt-8 space-y-1 font-display text-xl leading-snug font-semibold sm:text-2xl">
+          {utp1.lines.map((l) => <p>{l}</p>)}
+        </div>
+        <p class="mt-10 text-lg font-semibold">{utp1.questionsIntro}</p>
+        <ol class="mt-4 space-y-3">
+          {utp1.questions.map((q, i) => (
+            <li class="flex items-center gap-4 text-lg">
+              <span class="grid size-8 shrink-0 place-items-center rounded-full bg-white font-display text-sm font-bold text-terracotta-700">{i + 1}</span>{q}
+            </li>
+          ))}
+        </ol>
+        <p class="mt-10 flex flex-wrap items-center gap-2 text-sm font-semibold" aria-label={utp1.flow.join(', then ')}>
+          {utp1.flow.map((f, i) => (
+            <>
+              <span class="rounded-full bg-white px-4 py-2">{f}</span>
+              {i < utp1.flow.length - 1 && <Icon name="arrow" class="size-4 text-terracotta-700" />}
+            </>
+          ))}
+        </p>
+        <p class="mt-8 text-lg leading-relaxed text-ink-soft">{utp1.closing}</p>
+      </div>
+      <MoistureDiagram labels={utp1.diagram} />
+    </div>
+  </section>
+
+  <!-- ============ UTP 2 — SMART REMOVAL ============ -->
+  <section class="section" aria-labelledby="utp2-title">
+    <div class="container-x grid gap-16 lg:grid-cols-[1fr_1.05fr] lg:gap-24">
+      <div>
+        <SectionHead id="utp2-title" title={utp2.title} />
+        <div class="mt-8 space-y-1 font-display text-xl leading-snug font-semibold sm:text-2xl">
+          {utp2.lines.map((l) => <p>{l}</p>)}
+        </div>
+        <p class="mt-10 text-lg font-semibold">{utp2.separateIntro}</p>
+        <ul class="mt-5 grid gap-3">
+          {utp2.separate.map((s, i) => (
+            <li class:list={['flex items-center gap-4 rounded-2xl px-5 py-4 text-lg font-medium', ['bg-terracotta-100', 'bg-gold-100', 'bg-sage-100'][i]]}>
+              <span class:list={['size-3 rounded-full', ['bg-terracotta-700', 'bg-gold', 'bg-sage'][i]]}></span>{s}
+            </li>
+          ))}
+        </ul>
+        <div class="mt-10 space-y-4 text-lg leading-relaxed text-ink-soft">
+          {utp2.paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+      <div class="lg:pt-6">
+        <RemovalCompare left={utp2.compare.left} right={utp2.compare.right} legend={utp2.separate} />
+        <aside class="mt-10 flex gap-4 rounded-3xl bg-white p-7 shadow-[0_1px_2px_rgba(46,42,38,.04)]">
+          <Icon name="droplet" class="size-6 shrink-0 text-gold-700" />
+          <p class="leading-relaxed">{utp2.subsidy}</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHECKLIST ============ -->
+  <section class="section bg-sage-100" aria-labelledby="checklist-title">
+    <div class="container-x">
+      <SectionHead id="checklist-title" eyebrow={checklist.eyebrow} title={checklist.title} intro={checklist.intro} />
+      <ul class="mt-20 grid gap-4 md:grid-cols-2">
+        {checklist.items.map((c) => (
+          <li class="flex gap-5 rounded-3xl bg-white p-6 sm:p-7">
+            <span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border-2 border-sage-600 text-sage-800"><Icon name="check" class="size-4" strokeWidth={2.5} /></span>
+            <div>
+              <p class="text-lg leading-snug font-bold">{c.q}</p>
+              {c.a && <p class="mt-2 leading-relaxed text-ink-soft">{c.a}</p>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ TYPICAL MOLD PROBLEMS (GALLERY) ============ -->
+  <section id="gallery" class="section" aria-labelledby="gallery-title">
+    <div class="container-x">
+      <SectionHead id="gallery-title" eyebrow="Gallery" title={typical.title} />
+      <div class="mt-20 grid gap-6 md:grid-cols-2 lg:grid-cols-6 lg:gap-8">
+        {typical.items.map((t, i) => (
+          <article class:list={['flex flex-col overflow-hidden rounded-[1.75rem] bg-white shadow-[0_18px_50px_-30px_rgba(46,42,38,.3)]', i < 2 ? 'lg:col-span-3' : 'lg:col-span-2']}>
+            <div class:list={['overflow-hidden', i < 2 ? 'aspect-[16/10]' : 'aspect-[4/3]']}><Photo image={t.image} alt={t.alt} sizes={i < 2 ? '(min-width: 1024px) 600px, 100vw' : '(min-width: 1024px) 400px, 100vw'} /></div>
+            <div class="p-7 sm:p-8">
+              <p class:list={['inline-block rounded-full px-3.5 py-1.5 text-xs font-semibold', accents[i % accents.length]]}>{t.property}</p>
+              <h3 class="mt-4 text-2xl font-extrabold">{t.title}</h3>
+              <p class="mt-3 leading-relaxed text-ink-soft">{t.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OUR PROCESS ============ -->
+  <section id="process" class="section bg-sage-100" aria-labelledby="process-title">
+    <div class="container-x">
+      <SectionHead id="process-title" eyebrow={process.eyebrow} title={process.title} center />
+      <ol class="relative mt-20 grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+        {process.steps.map((s, i) => (
+          <li class="card relative flex flex-col">
+            <span class="font-display text-6xl leading-none font-extrabold text-terracotta" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-6 text-xl leading-tight font-extrabold">{s.title}</h3>
+            <p class="mt-3 leading-relaxed text-ink-soft">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ LOCAL EXPERTISE ============ -->
+  <section id="about" class="section" aria-labelledby="about-title">
+    <div class="container-x grid gap-16 lg:grid-cols-[1.2fr_1fr] lg:gap-24">
+      <div>
+        <SectionHead id="about-title" eyebrow={local.eyebrow} title={local.title} />
+        <div class="mt-8 space-y-5 text-lg leading-relaxed text-ink-soft">
+          {local.paragraphs.map((p, i) => <p class:list={[i >= 2 && 'font-semibold text-ink']}>{p}</p>)}
+        </div>
+      </div>
+      <div class="grid content-end gap-6">
+      <div class="aspect-[4/3] overflow-hidden rounded-[2rem]"><Photo image={local.photo.image} alt={local.photo.alt} sizes="(min-width: 1024px) 520px, 100vw" /></div>
+      <div class="rounded-[2rem] bg-sage-900 p-8 text-ivory sm:p-10">
+        <p class="font-display text-2xl font-extrabold text-white">{local.areasTitle}</p>
+        <ul class="mt-7 flex flex-wrap gap-2.5">
+          {local.areas.map((a) => <li class="rounded-full border border-white/15 px-4 py-2 text-[0.95rem]">{a}</li>)}
+        </ul>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="pricing" class="section bg-sage-100" aria-labelledby="pricing-title">
+    <div class="container-x">
+      <SectionHead id="pricing-title" eyebrow={pricingCopy.eyebrow} title={pricingCopy.title} intro={pricingCopy.intro} />
+      <div class="mt-20 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+        {showPriceTable && (
+          <div class="card">
+            <p class="text-lg leading-relaxed">{pricingCopy.tableIntro}</p>
+            <table class="mt-6 w-full text-left">
+              <thead>
+                <tr class="border-b border-ink/10 text-sm text-ink-soft"><th scope="col" class="py-3 font-semibold">{pricingCopy.tableHead}</th><th scope="col" class="py-3 text-right font-semibold">{pricingCopy.tableHead2}</th></tr>
+              </thead>
+              <tbody>
+                {pricing.map((p) => (
+                  <tr class="border-b border-ink/5 last:border-0">
+                    <th scope="row" class="py-4 pr-4 font-medium">{p.project}</th>
+                    <td class="py-4 text-right font-display font-bold whitespace-nowrap"><Draft value={p.price} placeholder="[$ — verify]" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div class:list={['card', !showPriceTable && 'lg:col-span-2']}>
+          <h3 class="text-2xl font-extrabold">{pricingCopy.factorsTitle}</h3>
+          <ul class="mt-6 flex flex-wrap gap-2.5">
+            {pricingCopy.factors.map((f, i) => <li class:list={['rounded-full px-4 py-2 font-medium', accents[i % accents.length]]}>{f}</li>)}
+          </ul>
+          <div class="mt-8 space-y-3 border-t border-ink/8 pt-8 text-lg leading-relaxed">
+            {pricingCopy.closing.map((c, i) => <p class:list={[i === pricingCopy.closing.length - 1 ? 'font-bold' : 'text-ink-soft']}>{c}</p>)}
+          </div>
+          <a href="#estimate" class="btn-primary mt-8">{cta.estimate} <Icon name="arrow" class="size-4" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REVIEWS (hidden in production until real reviews exist) ============ -->
+  {showReviews && (
+    <section class="section" aria-labelledby="reviews-title">
+      <div class="container-x">
+        <div class="mx-auto max-w-3xl text-center">
+          <p class="flex items-center justify-center gap-5 text-sm font-medium tracking-[0.32em] text-ink-soft uppercase">
+            <span class="h-px w-14 bg-gold" aria-hidden="true"></span>{reviewsCopy.eyebrow}<span class="h-px w-14 bg-gold" aria-hidden="true"></span>
+          </p>
+          <h2 id="reviews-title" class="mt-6 font-serif text-4xl leading-tight font-semibold tracking-tight sm:text-5xl lg:text-6xl">{reviewsCopy.title}</h2>
+          <p class="mt-5 font-serif text-lg text-ink-soft sm:text-xl">{reviewsCopy.intro}</p>
+          {SHOW_DRAFT && reviews.length === 0 && <p class="mt-6"><span class="draft">Draft only — hidden in production until real, verified Google reviews are added</span></p>}
+        </div>
+
+        <div class="mt-16 flex flex-wrap justify-center gap-6">
+          {(reviews.length ? reviews : Array.from({ length: 5 }, () => null)).map((r, i, all) => {
+            // rows of three; a trailing pair is centred and a little wider (as in the design)
+            const trailingPair = all.length % 3 === 2 && i >= all.length - 2;
+            const initials = r ? r.name.split(/\s+/).map((n) => n[0]).join('').slice(0, 2).toUpperCase() : '··';
+            return (
+              <article class:list={[
+                'flex w-full flex-col rounded-2xl bg-white p-7 shadow-[0_1px_3px_rgba(46,42,38,.06),0_10px_30px_-18px_rgba(46,42,38,.22)] sm:p-8 md:w-[calc((100%-1.5rem)/2)]',
+                trailingPair ? 'lg:w-[36%]' : 'lg:w-[calc((100%-3rem)/3)]',
+              ]}>
+                <header class="flex items-start gap-4">
+                  {r?.avatar ? (
+                    <Image src={r.avatar} alt="" width={64} height={64} densities={[1, 2]} class="size-16 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <span class:list={['grid size-16 shrink-0 place-items-center rounded-full text-xl font-semibold', accents[i % accents.length]]} aria-hidden="true">{initials}</span>
+                  )}
+                  <div class="min-w-0 flex-1 pt-1.5">
+                    <p class="truncate text-lg font-bold">{r ? r.name : <span class="draft">[VERIFIED CLIENT NAME]</span>}</p>
+                    <p class="mt-1 flex items-center gap-2 text-ink-soft">
+                      <svg viewBox="0 0 24 24" class="size-5 shrink-0" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.2-2.1 3.5-5.1 3.5-8.7Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9h-4v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.4 14.4a7.2 7.2 0 0 1 0-4.7V6.6h-4a12 12 0 0 0 0 10.8l4-3Z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1C6.3 6.9 8.9 4.8 12 4.8Z"/></svg>
+                      <span>Google · {r ? <time datetime={r.date}>{timeAgo(r.date)}</time> : '[date]'}</span>
+                    </p>
+                  </div>
+                </header>
+                <div class="mt-5 flex -space-x-1 text-[#e8a838]" role="img" aria-label={`${r?.rating ?? 5} out of 5 stars`}>
+                  {Array.from({ length: 5 }, (_, k) => <Icon name="star" class:list={['size-6', k >= (r?.rating ?? 5) && 'text-ink/15']} />)}
+                </div>
+                <p class="mt-4 text-[1.05rem] leading-relaxed text-ink/80">{r ? r.text : <span class="draft">[VERIFIED REVIEW TEXT]</span>}</p>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ PROFESSIONAL STANDARDS STRIP ============ -->
+  <section class="border-y border-ink/8 bg-ivory-50" aria-label="Professional standards">
+    <div class="container-x py-12">
+      <ul class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 lg:grid-cols-8">
+        {shownStandards.map((s, i) => (
+          <li class="flex flex-col items-center text-center">
+            <span class:list={['grid size-12 place-items-center rounded-full', accents[i % accents.length]]}><Icon name={s.icon} class="size-6" /></span>
+            <span class="mt-3 text-sm leading-snug font-semibold">{s.label}{!s.verified && <span class="text-gold-700">*</span>}</span>
+          </li>
+        ))}
+      </ul>
+      {SHOW_DRAFT && <p class="mt-8 text-center text-xs"><span class="draft">{standardsNote} (draft note — not shown in production)</span></p>}
+    </div>
+  </section>
+
+  <!-- ============ EQUIPMENT & CONTROLS ============ -->
+  <section class="section" aria-labelledby="equipment-title">
+    <div class="container-x">
+      <SectionHead id="equipment-title" eyebrow={equipment.eyebrow} title={equipment.title} />
+      <div class="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {equipment.items.map((e, i) => (
+          <div class="flex gap-5 rounded-[1.75rem] border border-ink/8 p-7 sm:p-8">
+            <span class:list={['grid size-14 shrink-0 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={e.icon} class="size-7" /></span>
+            <div>
+              <h3 class="text-xl font-extrabold">{e.title}</h3>
+              <p class="mt-2 leading-relaxed text-ink-soft">{e.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OAKVILLE LOCAL INFORMATION + MAP ============ -->
+  <section class="section bg-sage-100" aria-labelledby="oakville-title">
+    <div class="container-x grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
+      <div>
+        <SectionHead id="oakville-title" title={oakville.title} />
+        <div class="mt-8 space-y-4 text-lg leading-relaxed text-ink-soft">
+          {oakville.paragraphs.map((p) => <p class:list={[p === 'It is water.' && 'font-display text-2xl font-extrabold text-ink']}>{p}</p>)}
+        </div>
+        <p class="mt-8 rounded-3xl bg-white p-7 font-display text-xl leading-snug font-bold">{oakville.emphasis}</p>
+      </div>
+      <div class="aspect-[4/3] overflow-hidden rounded-[2rem] bg-sage-200 shadow-[0_30px_60px_-35px_rgba(46,42,38,.45)] lg:aspect-square">
+        <iframe
+          src={mapSrc}
+          title={oakville.mapTitle}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          class="h-full w-full border-0"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="section" aria-labelledby="faq-title">
+    <div class="container-x grid gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
+      <div class="lg:sticky lg:top-32 lg:self-start">
+        <SectionHead id="faq-title" eyebrow={faqCopy.eyebrow} title={faqCopy.title} />
+      </div>
+      <div class="space-y-3">
+        {faq.map((f, i) => (
+          <details class="group rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgba(46,42,38,.04)] transition open:shadow-[0_18px_50px_-30px_rgba(46,42,38,.35)] sm:p-7" open={i === 0}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-lg leading-snug font-bold sm:text-xl [&::-webkit-details-marker]:hidden">
+              <h3>{f.q}</h3>
+              <span class="grid size-9 shrink-0 place-items-center rounded-full bg-sage-100 transition duration-300 group-open:rotate-45 group-open:bg-terracotta-700 group-open:text-white">
+                <Icon name="plus" class="size-4" />
+              </span>
+            </summary>
+            <p class="mt-4 leading-relaxed text-ink-soft">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section id="contact" class="section bg-sage-100" aria-labelledby="contact-title">
+    <div class="container-x grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
+      <div class="lg:pt-6">
+        <h2 id="contact-title" class="h-section">{finalCta.title}</h2>
+        <p class="mt-8 font-display text-2xl leading-snug font-semibold text-terracotta-700">{finalCta.lead}</p>
+        <p class="lead mt-5">{finalCta.text}</p>
+        <div class="mt-10"><PhoneButton label="call" class="btn-primary text-lg" /></div>
+      </div>
+      <div class="rounded-[2rem] bg-white p-6 shadow-[0_40px_80px_-45px_rgba(46,42,38,.5)] sm:p-10">
+        <p class="font-display text-3xl font-extrabold">{cta.estimate}</p>
+        <div class="mt-6"><QuoteForm variant="final" /></div>
+      </div>
+    </div>
+  </section>
+</Layout>

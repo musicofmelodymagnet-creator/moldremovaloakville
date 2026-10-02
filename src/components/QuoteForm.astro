@@ -1,0 +1,174 @@
+---
+// Форма заявки. Две версии: hero (без email) и final (с email).
+// Работает и без JS (обычный POST на /send.php), с JS — отправка через fetch с понятными ошибками.
+// Успех показывается ТОЛЬКО если сервер реально принял заявку; generate_lead (GA4) — один раз на отправку.
+import Icon from './Icon.astro';
+import { propertyTypes, cta } from '../data/home';
+
+interface Props { variant: 'hero' | 'final' }
+const { variant } = Astro.props;
+const p = `qf-${variant}`;
+const withEmail = variant === 'final';
+const messageLabel = variant === 'hero' ? 'What are you seeing?' : 'Tell us what happened';
+
+const field =
+  'peer w-full rounded-2xl border border-ink/12 bg-ivory-50 py-3.5 pr-4 pl-11 text-base text-ink placeholder:text-ink/40 transition focus:border-terracotta-700 focus:bg-white focus:outline-none aria-[invalid=true]:border-terracotta-700 aria-[invalid=true]:bg-terracotta-100/40';
+const label = 'mb-1.5 block text-sm font-semibold text-ink';
+const iconCls = 'pointer-events-none absolute top-1/2 left-4 size-[18px] -translate-y-1/2 text-ink/40';
+const err = 'mt-1.5 hidden text-sm text-terracotta-800';
+---
+<form action="/send.php" method="post" class="grid gap-4" data-lead-form={variant} novalidate>
+  <input type="hidden" name="form_id" value={variant} />
+  <input type="hidden" name="ts" value="" data-ts />
+  <!-- honeypot: invisible to people, bots fill it -->
+  <div class="absolute -left-[9999px]" aria-hidden="true">
+    <label for={`${p}-website`}>Website</label>
+    <input id={`${p}-website`} type="text" name="website" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class:list={['grid gap-4', withEmail && 'sm:grid-cols-2']}>
+    <div>
+      <label for={`${p}-name`} class={label}>Name <span class="text-terracotta-700" aria-hidden="true">*</span></label>
+      <div class="relative">
+        <Icon name="badge" class={iconCls} />
+        <input id={`${p}-name`} name="name" type="text" required minlength="2" maxlength="100" autocomplete="name" class={field} aria-describedby={`${p}-name-error`} />
+      </div>
+      <p id={`${p}-name-error`} class={err} data-error-for="name"></p>
+    </div>
+    <div>
+      <label for={`${p}-phone`} class={label}>Phone <span class="text-terracotta-700" aria-hidden="true">*</span></label>
+      <div class="relative">
+        <Icon name="phone" class={iconCls} />
+        <input id={`${p}-phone`} name="phone" type="tel" required maxlength="30" autocomplete="tel" inputmode="tel" class={field} aria-describedby={`${p}-phone-error`} />
+      </div>
+      <p id={`${p}-phone-error`} class={err} data-error-for="phone"></p>
+    </div>
+  </div>
+
+  {withEmail && (
+    <div>
+      <label for={`${p}-email`} class={label}>Email</label>
+      <div class="relative">
+        <Icon name="mail" class={iconCls} />
+        <input id={`${p}-email`} name="email" type="email" maxlength="150" autocomplete="email" class={field} aria-describedby={`${p}-email-error`} />
+      </div>
+      <p id={`${p}-email-error`} class={err} data-error-for="email"></p>
+    </div>
+  )}
+
+  <div>
+    <label for={`${p}-property`} class={label}>Property Type <span class="text-terracotta-700" aria-hidden="true">*</span></label>
+    <div class="relative">
+      <Icon name="home" class={iconCls} />
+      <select id={`${p}-property`} name="property_type" required class:list={[field, 'appearance-none pr-10']} aria-describedby={`${p}-property-error`}>
+        <option value="" selected disabled>Select…</option>
+        {propertyTypes.map((t) => <option>{t}</option>)}
+      </select>
+      <Icon name="chevron-right" class="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 rotate-90 text-ink/50" />
+    </div>
+    <p id={`${p}-property-error`} class={err} data-error-for="property_type"></p>
+  </div>
+
+  <div>
+    <label for={`${p}-message`} class={label}>{messageLabel} <span class="text-terracotta-700" aria-hidden="true">*</span></label>
+    <div class="relative">
+      <Icon name="file" class="pointer-events-none absolute top-4 left-4 size-[18px] text-ink/40" />
+      <textarea id={`${p}-message`} name="message" rows="3" required minlength="5" maxlength="2000" class:list={[field, 'resize-y']} aria-describedby={`${p}-message-error`}></textarea>
+    </div>
+    <p id={`${p}-message-error`} class={err} data-error-for="message"></p>
+  </div>
+
+  <p class="hidden rounded-2xl bg-terracotta-100 px-4 py-3 text-sm text-terracotta-800" data-form-error role="alert"></p>
+
+  <button type="submit" class="btn-primary mt-1 w-full text-lg" data-submit>
+    <span data-submit-label>{cta.submit}</span>
+    <Icon name="arrow" class="size-5" />
+  </button>
+
+  <p class="flex items-start gap-2 text-sm leading-snug text-ink-soft">
+    <Icon name="lock" class="mt-0.5 size-4 shrink-0" />
+    No obligation. Your information is used only to respond to your request.
+  </p>
+
+  <div class="hidden rounded-3xl bg-sage-100 p-6 text-center" data-form-success role="status" tabindex="-1">
+    <span class="mx-auto grid size-12 place-items-center rounded-full bg-sage-800 text-white"><Icon name="check" /></span>
+    <p class="mt-4 font-display text-xl font-bold">Thank you — your request has been sent.</p>
+    <p class="mt-1.5 text-ink-soft">We will contact you shortly to discuss your estimate.</p>
+  </div>
+</form>
+
+<script>
+  type Gtag = (...args: unknown[]) => void;
+  const PHONE_DIGITS = /\d/g;
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function validate(form: HTMLFormElement) {
+    const errors: Record<string, string> = {};
+    const v = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
+    if (v('name').length < 2) errors.name = 'Please enter your name.';
+    const digits = (v('phone').match(PHONE_DIGITS) ?? []).length;
+    if (digits < 10 || digits > 15) errors.phone = 'Please enter a valid phone number, including area code.';
+    if (form.elements.namedItem('email') && v('email') && !EMAIL.test(v('email'))) errors.email = 'Please enter a valid email address or leave it blank.';
+    if (!v('property_type')) errors.property_type = 'Please choose a property type.';
+    if (v('message').length < 5) errors.message = 'Please describe briefly what you are seeing.';
+    return errors;
+  }
+
+  function showErrors(form: HTMLFormElement, errors: Record<string, string>) {
+    form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => {
+      const name = el.dataset.errorFor!;
+      const input = form.elements.namedItem(name) as HTMLElement | null;
+      const msg = errors[name];
+      el.textContent = msg ?? '';
+      el.classList.toggle('hidden', !msg);
+      input?.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    });
+    const first = Object.keys(errors)[0];
+    if (first) (form.elements.namedItem(first) as HTMLElement | null)?.focus();
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-lead-form]').forEach((form) => {
+    const ts = form.querySelector<HTMLInputElement>('[data-ts]');
+    if (ts) ts.value = String(Date.now());
+    const btn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const btnLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+    const generalError = form.querySelector<HTMLElement>('[data-form-error]')!;
+    const success = form.querySelector<HTMLElement>('[data-form-success]')!;
+    const defaultLabel = btnLabel.textContent;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      generalError.classList.add('hidden');
+      const errors = validate(form);
+      showErrors(form, errors);
+      if (Object.keys(errors).length) return;
+
+      btn.disabled = true;
+      btnLabel.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        const data = await res.json().catch(() => null);
+        if (res.ok && data?.ok) {
+          // Success state only after the server confirmed the lead was delivered
+          [...form.children].forEach((c) => (c as HTMLElement).classList.add('hidden'));
+          success.classList.remove('hidden');
+          success.focus();
+          if (!form.dataset.sent) {
+            form.dataset.sent = '1';
+            (window as unknown as { gtag?: Gtag }).gtag?.('event', 'generate_lead', { form_id: form.dataset.leadForm });
+          }
+          return;
+        }
+        if (data?.errors) showErrors(form, data.errors);
+        generalError.textContent = data?.message ?? 'Sorry, your request could not be sent. Please try again or call us.';
+        generalError.classList.remove('hidden');
+      } catch {
+        generalError.textContent = 'Connection problem — your request was not sent. Please check your internet connection and try again.';
+        generalError.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btnLabel.textContent = defaultLabel;
+      }
+    });
+  });
+</script>

@@ -1,0 +1,54 @@
+---
+// Minimal inline icon set (Lucide-style, 1.75 stroke) — no JS, no external requests.
+interface Props { name: string; class?: string; strokeWidth?: number }
+const { name, class: cls = 'size-6', strokeWidth = 1.75 } = Astro.props;
+
+const paths: Record<string, string> = {
+  phone: '<path d="M5 3h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 12l5 2v3a2 2 0 0 1-2 2A15 15 0 0 1 3 5a2 2 0 0 1 2-2Z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  pin: '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/>',
+  arrow: '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+  'arrow-down': '<path d="M12 5v14"/><path d="m6 13 6 6 6-6"/>',
+  'chevron-left': '<path d="m15 6-6 6 6 6"/>',
+  'chevron-right': '<path d="m9 6 6 6-6 6"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  'check-circle': '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" fill="currentColor" stroke="none"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  shield: '<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/>',
+  badge: '<circle cx="12" cy="9" r="6"/><path d="m8.5 14 -1.5 7 5-3 5 3-1.5-7"/>',
+  award: '<circle cx="12" cy="8.5" r="5.5"/><path d="M8.5 13 7 21l5-2.5L17 21l-1.5-8"/><path d="m10 8.5 1.5 1.5 3-3"/>',
+  file: '<path d="M14 3H6v18h12V7l-4-4Z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/>',
+  fan: '<circle cx="12" cy="12" r="1.8"/><path d="M12 10.2C11 6 13.5 3 16 4.5c2 1.2.5 4.5-4 5.7Z"/><path d="M13.8 12c4.2-1 7.2 1.5 5.7 4-1.2 2-4.5.5-5.7-4Z"/><path d="M12 13.8c1 4.2-1.5 7.2-4 5.7-2-1.2-.5-4.5 4-5.7Z"/><path d="M10.2 12C6 13 3 10.5 4.5 8c1.2-2 4.5-.5 5.7 4Z"/>',
+  camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  'hard-hat': '<path d="M3 17h18v2H3z"/><path d="M5 17v-3a7 7 0 0 1 14 0v3"/><path d="M10 7V5h4v2"/>',
+  droplet: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
+  flask: '<path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7 15h10"/>',
+  hammer: '<path d="m14 6 4 4"/><path d="M12.5 4.5 16 2l6 6-2.5 3.5"/><path d="m14.5 8.5-11 11a1.4 1.4 0 0 0 2 2l11-11"/>',
+  ruler: '<path d="M3 16 16 3l5 5L8 21z"/><path d="m7 12 2 2M10 9l2 2M13 6l2 2"/>',
+  vacuum: '<path d="M6 21h12"/><path d="M9 21V9a3 3 0 0 1 6 0v12"/><path d="M15 12h3a2 2 0 0 1 2 2v3"/><path d="M12 6V3"/>',
+  barrier: '<path d="M4 4v17M20 4v17"/><path d="M4 6h16M4 19h16"/><path d="M8 6v13M12 6v13M16 6v13" stroke-dasharray="2 2.5"/>',
+  gauge: '<path d="M4 17a8 8 0 1 1 16 0"/><path d="m12 17 4-5"/><circle cx="12" cy="17" r="1.3"/>',
+  thermal: '<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0Z"/><path d="M12 9v7"/><path d="M17 6h3M17 10h3"/>',
+  wind: '<path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h16a3 3 0 1 1-3 3"/><path d="M3 16h7"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',
+  logo: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M12 19.5c-2.2 0-3.5-1.6-3.5-3.4 0-2.4 3.5-5.6 3.5-5.6s3.5 3.2 3.5 5.6c0 1.8-1.3 3.4-3.5 3.4Z"/>',
+};
+---
+<svg
+  class={cls}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={paths[name] ?? ''}
+/>

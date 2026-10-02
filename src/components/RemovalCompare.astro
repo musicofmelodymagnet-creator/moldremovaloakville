@@ -1,0 +1,32 @@
+---
+// УТП №2 — визуальное сравнение «Automatic Tear-Out» против «Measured / Targeted Removal».
+// Схематично, без процентов экономии (по ТЗ — никаких вводящих в заблуждение цифр).
+interface Props { left: string; right: string; legend: string[] }
+const { left, right, legend } = Astro.props;
+// r = remove, c = clean, d = dry, k = keep (unaffected)
+const tearOut = 'rrrrrrrrrrrr'.split('');
+const targeted = 'kkdkkrrdkcrc'.split('');
+const cell: Record<string, string> = {
+  r: 'bg-terracotta-700/85 bg-[repeating-linear-gradient(135deg,transparent_0_6px,rgba(255,255,255,.18)_6px_8px)]',
+  c: 'bg-gold',
+  d: 'bg-sage',
+  k: 'bg-ivory-200',
+};
+---
+<figure>
+  <div class="grid gap-5 sm:grid-cols-2">
+    {[{ t: left, cells: tearOut }, { t: right, cells: targeted }].map((p, idx) => (
+      <div class:list={['card', idx === 1 && 'ring-2 ring-sage-600']}>
+        <p class="font-display text-lg font-bold">{p.t}</p>
+        <div class="mt-5 grid grid-cols-4 gap-1.5 rounded-2xl bg-ivory-50 p-2" aria-hidden="true">
+          {p.cells.map((c) => <div class:list={['aspect-[3/4] rounded-lg', cell[c]]}></div>)}
+        </div>
+      </div>
+    ))}
+  </div>
+  <figcaption class="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-soft">
+    {[['r', legend[0]], ['c', legend[1]], ['d', legend[2]]].map(([k, l]) => (
+      <span class="inline-flex items-center gap-2"><span class:list={['size-4 rounded', cell[k]]}></span>{l}</span>
+    ))}
+  </figcaption>
+</figure>

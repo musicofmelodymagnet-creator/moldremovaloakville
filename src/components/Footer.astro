@@ -1,0 +1,66 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import Draft from './Draft.astro';
+import { site, pageLink, privacyPolicyUrl, SHOW_DRAFT } from '../data/site';
+import { footer, local } from '../data/home';
+const year = new Date().getFullYear();
+const link = 'transition hover:text-gold';
+---
+<footer class="bg-sage-900 text-ivory/75">
+  <div class="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.2fr_1.4fr_1fr_1fr] lg:gap-10">
+    <div>
+      <Logo tone="light" />
+      <ul class="mt-8 space-y-3 text-[0.95rem]">
+        {(site.phoneE164 || SHOW_DRAFT) && (
+          <li class="flex items-center gap-3"><Icon name="phone" class="size-4 text-gold" />
+            {site.phoneE164 ? <a href={`tel:${site.phoneE164}`} class={link}>{site.phone}</a> : <Draft value={null} placeholder="[PHONE]" />}
+          </li>
+        )}
+        {(site.email || SHOW_DRAFT) && (
+          <li class="flex items-center gap-3"><Icon name="mail" class="size-4 text-gold" />
+            {site.email ? <a href={`mailto:${site.email}`} class={link}>{site.email}</a> : <Draft value={null} placeholder="[EMAIL]" />}
+          </li>
+        )}
+        {(site.napText || SHOW_DRAFT) && (
+          <li class="flex items-start gap-3"><Icon name="pin" class="mt-0.5 size-4 shrink-0 text-gold" />
+            <Draft value={site.napText} placeholder="[VERIFIED NAP / SERVICE-AREA INFORMATION]" />
+          </li>
+        )}
+      </ul>
+      {site.sameAs.length > 0 && (
+        <ul class="mt-6 flex gap-3">
+          {site.sameAs.map((u) => <li><a href={u} class={link} rel="noopener">{new URL(u).hostname.replace('www.', '')}</a></li>)}
+        </ul>
+      )}
+    </div>
+
+    <div>
+      <p class="font-display text-sm font-bold tracking-[0.18em] text-white uppercase">{footer.servicesTitle}</p>
+      <ul class="mt-6 space-y-2.5 text-[0.95rem]">
+        {footer.services.map((s) => {
+          const href = s.href ?? pageLink(s.page);
+          return <li>{href ? <a href={href} class={link}>{s.label}</a> : <span>{s.label}</span>}</li>;
+        })}
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-display text-sm font-bold tracking-[0.18em] text-white uppercase">{footer.areaTitle}</p>
+      <ul class="mt-6 space-y-2.5 text-[0.95rem]">
+        {local.areas.map((a) => <li>{a}</li>)}
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-display text-sm font-bold tracking-[0.18em] text-white uppercase">{footer.companyTitle}</p>
+      <ul class="mt-6 space-y-2.5 text-[0.95rem]">
+        {footer.company.map((c) => <li><a href={c.href} class={link}>{c.label}</a></li>)}
+        {privacyPolicyUrl ? <li><a href={privacyPolicyUrl} class={link}>Privacy Policy</a></li> : SHOW_DRAFT && <li><span class="draft">Privacy Policy — page not created yet</span></li>}
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <p class="container-x py-7 text-sm text-ivory/70">© {year} {site.name}</p>
+  </div>
+</footer>

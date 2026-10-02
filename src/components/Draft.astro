@@ -1,0 +1,8 @@
+---
+// Неподтверждённое значение: в dev показывает placeholder, в production — ничего.
+// Использование: <Draft value={site.phone} placeholder="[PHONE NUMBER]" />
+import { SHOW_DRAFT } from '../data/site';
+interface Props { value?: string | null; placeholder: string }
+const { value, placeholder } = Astro.props;
+---
+{value ? value : SHOW_DRAFT ? <span class="draft" title="STATUS: VERIFY BEFORE PUBLISHING">{placeholder}</span> : null}

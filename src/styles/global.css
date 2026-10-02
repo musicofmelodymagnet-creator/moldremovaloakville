@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+/*
+  Palette (from the brand board), narrowed to 3 colour families for icons/emblems:
+  Sage Green #A3AE9A · Warm Terracotta #C57A5A · Muted Gold #D4AF72 (+ Creamy Ivory for light surfaces).
+  Section backgrounds — only 3: ivory-50 (light), sage-100 (tint), sage-900 (dark).
+  Base swatches are used for surfaces/accents; deeper shades of the same hues
+  carry text and buttons so contrast stays readable (WCAG AA).
+*/
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Serif — only for the reviews block heading (per design reference) */
+  --font-serif: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+
+  --color-ivory: #f3ede3;
+  --color-ivory-50: #faf7f1;
+  --color-ivory-200: #e9e0d2;
+
+  --color-sage: #a3ae9a;
+  --color-sage-100: #e6eae1;
+  --color-sage-200: #cfd6c8;
+  --color-sage-600: #6e7b65;
+  --color-sage-800: #3f4a39;
+  --color-sage-900: #2c3428;
+
+
+  --color-terracotta: #c57a5a;
+  --color-terracotta-100: #f4e2d9;
+  --color-terracotta-700: #9a5235;
+  --color-terracotta-800: #7f4229;
+
+  --color-gold: #d4af72;
+  --color-gold-100: #f5ead6;
+  --color-gold-700: #6f5420;
+
+
+  /* Warm charcoal for text — reads as part of the palette rather than pure black */
+  --color-ink: #2e2a26;
+  --color-ink-soft: #5b544d;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-ivory-50 font-sans text-ink antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight text-balance;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-terracotta-700;
+  }
+}
+
+/* Own utilities (Tailwind v4: @utility so they can be combined with variants and @apply) */
+@utility container-x {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10;
+}
+/* Generous vertical rhythm between sections */
+@utility section {
+  @apply py-24 sm:py-32 lg:py-40;
+}
+@utility eyebrow {
+  @apply inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-terracotta-700;
+}
+/* Large section titles */
+@utility h-section {
+  @apply font-display text-4xl leading-[1.05] font-extrabold sm:text-5xl lg:text-6xl;
+}
+@utility lead {
+  @apply text-lg leading-relaxed text-ink-soft sm:text-xl;
+}
+@utility btn {
+  @apply inline-flex min-h-12 items-center whitespace-nowrap justify-center gap-2.5 rounded-full px-7 py-3.5 text-base font-semibold transition duration-300 ease-out-soft;
+}
+@utility btn-primary {
+  @apply btn bg-terracotta-700 text-white shadow-[0_14px_30px_-14px_rgba(127,66,41,.7)] hover:-translate-y-0.5 hover:bg-terracotta-800;
+}
+@utility btn-light {
+  @apply btn border border-white/40 text-white hover:border-white hover:bg-white/10;
+}
+@utility btn-outline {
+  @apply btn border border-ink/15 text-ink hover:border-ink/40 hover:bg-white;
+}
+@utility card {
+  @apply rounded-[1.75rem] bg-white p-7 shadow-[0_1px_2px_rgba(46,42,38,.04),0_18px_50px_-28px_rgba(46,42,38,.28)] sm:p-8;
+}
+/* Development-only marker for unverified business data */
+@utility draft {
+  @apply rounded-md bg-gold-100 px-1.5 py-0.5 font-mono text-[0.8em] text-gold-700 outline-1 outline-dashed outline-gold;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.reveal { animation: rise 0.9s var(--ease-out-soft) both; }
+.reveal-d1 { animation-delay: 0.08s; }
+.reveal-d2 { animation-delay: 0.16s; }
+.reveal-d3 { animation-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+  html { scroll-behavior: auto; }
+}

@@ -1,0 +1,20 @@
+---
+// Кнопка звонка (tel:). Если телефон ещё не подтверждён: в dev — placeholder, в production — не выводится.
+import Icon from './Icon.astro';
+import { site, SHOW_DRAFT } from '../data/site';
+interface Props { class?: string; label?: 'number' | 'call' }
+const { class: cls = 'btn-primary', label = 'number' } = Astro.props;
+const href = site.phoneE164 ? `tel:${site.phoneE164}` : null;
+const text = site.phone ?? '[PHONE NUMBER]';
+---
+{href ? (
+  <a href={href} class={cls}>
+    <Icon name="phone" class="size-5" />
+    {label === 'call' ? <span>Call <span class="whitespace-nowrap">{text}</span></span> : <span class="whitespace-nowrap">{text}</span>}
+  </a>
+) : SHOW_DRAFT ? (
+  <span class:list={[cls, 'cursor-not-allowed opacity-80']} title="STATUS: VERIFY BEFORE PUBLISHING — phone not set">
+    <Icon name="phone" class="size-5" />
+    <span class="whitespace-nowrap">{text}</span>
+  </span>
+) : null}

@@ -1,0 +1,15 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/mold-removal-oakville-logo.jpg';
+interface Props { tone?: 'dark' | 'light' }
+const { tone = 'dark' } = Astro.props;
+---
+<a href="/" class="group flex items-center gap-3">
+  <span class:list={['block size-12 shrink-0 overflow-hidden rounded-2xl', tone === 'light' ? 'bg-ivory-50 ring-1 ring-white/20' : 'ring-1 ring-ink/5']}>
+    <Image src={logo} alt="" width={96} height={96} class="size-full object-cover" loading="eager" />
+  </span>
+  <span class="font-display leading-none whitespace-nowrap">
+    <span class:list={['block text-[1.05rem] font-extrabold tracking-tight uppercase', tone === 'dark' ? 'text-ink' : 'text-white']}>Mold Removal</span>
+    <span class:list={['mt-1 block text-[0.7rem] font-bold tracking-[0.42em] uppercase', tone === 'dark' ? 'text-terracotta-700' : 'text-gold']}>Oakville</span>
+  </span>
+</a>

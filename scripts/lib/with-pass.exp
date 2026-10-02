@@ -1,0 +1,14 @@
+#!/usr/bin/expect -f
+# Запускает команду (ssh / rsync) и вводит пароль из переменной окружения DEPLOY_PASS.
+# Пароль не попадает ни в аргументы процесса, ни в git.
+# Код выхода — код выхода самой команды.
+set timeout 300
+log_user 1
+spawn -noecho {*}$argv
+expect {
+  -re "(?i)password:" { send -- "$env(DEPLOY_PASS)\r"; exp_continue }
+  timeout { puts stderr "with-pass: таймаут"; exit 124 }
+  eof
+}
+lassign [wait] pid spawnid os_error value
+exit $value
