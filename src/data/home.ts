@@ -3,12 +3,12 @@
 // Убраны только хвосты-подписи источников («Канада», «Halton», «Оквилл»), случайно вставшие в текст.
 import type { ServiceKey } from './site';
 import type { ImageMetadata } from 'astro';
-import heroMain from '../assets/hero/mold-removal-oakville-technician-treatment.jpeg';
-// Фото — превью iStock (comp). Перед публикацией купить лицензии и заменить файлы на лицензионные (те же имена).
+import heroMain from '../assets/hero/mold-removal-oakville-technician-treatment.jpg';
+// Фото — чистые версии от владельца (2026-10-02) из Photos/Photos for site; исходники подготовлены в JPEG q92 4:4:4, AVIF/WebP делает Astro.
 import pInspection from '../assets/photos/mold-inspection-oakville-moisture-meter.jpg';
 import pTesting from '../assets/photos/mold-testing-oakville-culture-plate.jpg';
 import pAttic from '../assets/photos/attic-mold-removal-oakville-roof-sheathing.jpg';
-import pBasement from '../assets/photos/basement-mold-removal-oakville-wall.jpg';
+import pBasement from '../assets/photos/basement-mold-removal-oakville-damp-basement.jpg';
 import pBlack from '../assets/photos/black-mold-removal-oakville-room-corner.jpg';
 import pBathroom from '../assets/photos/bathroom-mold-removal-oakville-tile-grout.jpg';
 import pCrawl from '../assets/photos/crawl-space-mold-removal-oakville-inspection.jpg';
@@ -22,8 +22,16 @@ import tBathroom from '../assets/photos/bathroom-ceiling-mold-trim.jpg';
 import tWall from '../assets/photos/mold-behind-finished-wall-wallpaper.jpg';
 import tCommercial from '../assets/photos/commercial-water-loss-mold-treatment.jpg';
 import localPhoto from '../assets/photos/oakville-basement-water-intrusion.jpg';
-import heroSpray from '../assets/hero/mold-remediation-technician-spraying-brick-wall.jpg';
-import heroCleanup from '../assets/hero/mold-cleanup-technician-respirator-wall.jpg';
+import heroSpray from '../assets/hero/mold-remediation-technician-spraying-wall.jpg';
+import heroCorner from '../assets/hero/black-mold-wall-corner-window.jpg';
+import heroBaseboard from '../assets/hero/mold-removal-technician-spraying-baseboard.jpg';
+// Эмблемы под фото hero (вырезаны из общего макета владельца, белый фон — ставить на белую карточку)
+import eScope from '../assets/emblems/written-scope-before-work.png';
+import eMoisture from '../assets/emblems/moisture-source-checked.png';
+import eHepa from '../assets/emblems/hepa-controlled-work-areas.png';
+import ePhoto from '../assets/emblems/photo-documentation.png';
+import eTargeted from '../assets/emblems/targeted-removal.png';
+import eVerification from '../assets/emblems/independent-verification-available.png';
 
 export const meta = {
   title: 'Mold Removal Oakville | Mold Remediation & Inspection',
@@ -40,30 +48,41 @@ export const nav = [
   { label: 'Contact', href: '#contact' },
 ];
 
-export const cta = { estimate: 'Get Free Estimate', submit: 'Request My Estimate' };
+export const cta = { estimate: 'Get Free Estimate', submit: 'Get Free Estimate', callNote: 'Speak with an expert' };
 
 export const hero = {
   h1: 'Mold Removal Oakville',
+  badge: '24/7 · Same-Day Response · Licensed & Insured',
   lead: 'Mold does not always stop where the stain stops.',
+  // Сменяющиеся фразы под фото hero (каждые 3,5 с)
+  rotating: [
+    'The stain may be small. The moisture problem may not be.',
+    'A clean-looking wall does not prove the problem is gone.',
+    'If moisture remains, mold can return.',
+    'A musty smell after cleanup deserves a closer look.',
+    'Removing more material will not fix the source of moisture.',
+  ],
   paragraphs: [
     'We provide mold removal and mould remediation in Oakville for homes, rental properties and commercial spaces. That includes attic mold, damp basements, bathrooms, wall cavities, water-damaged rooms and situations where the same problem keeps coming back after cleaning.',
     'Before recommending removal, we look at what matters first: where the moisture came from, how far it travelled and which materials are actually affected. That gives you a clearer scope — and helps avoid paying for work that does not solve the cause.',
   ],
   tagline: 'Know the scope before the demolition starts.',
+  // Эмблемы: title = текст на самой эмблеме (идёт в alt), text — уточнение под эмблемой
   trust: [
-    { icon: 'file', label: 'Written Scope Before Work' },
-    { icon: 'droplet', label: 'Moisture Source Checked' },
-    { icon: 'fan', label: 'HEPA-Controlled Work Areas' },
-    { icon: 'camera', label: 'Photo Documentation' },
-    { icon: 'flask', label: 'No Automatic Testing' },
-    { icon: 'hammer', label: 'No Automatic Tear-Out' },
+    { image: eScope, title: 'Written Scope Before Work', text: 'Know what is included before demolition starts.' },
+    { image: eMoisture, title: 'Moisture Source Checked', text: 'We look for the water problem behind the mold.' },
+    { image: eHepa, title: 'HEPA-Controlled Work Areas', text: 'Work zones are controlled during material disturbance.' },
+    { image: ePhoto, title: 'Photo Documentation', text: 'Clear records before, during and after the work.' },
+    { image: eTargeted, title: 'Targeted Removal', text: 'Remove affected materials without automatic over-demolition.' },
+    { image: eVerification, title: 'Independent Verification Available', text: 'Third-party clearance can be arranged when the project warrants it.' },
   ],
   note: 'Health Canada states that in most situations there is no need to identify the mould species or measure airborne concentration; the priority is finding and correcting the moisture and mould problem.',
   // Слайды hero: фото в src/assets/hero/. Добавить ещё слайд = ещё объект в массив (стрелки и точки появятся сами).
   slides: [
     { image: heroMain, alt: 'Mold removal technician in a protective suit and respirator spraying treatment inside a brick building' },
-    { image: heroSpray, alt: 'Technician in a protective suit spraying a white brick wall with a long-reach sprayer' },
-    { image: heroCleanup, alt: 'Technician in a respirator and protective suit cleaning mold from a wall' },
+    { image: heroSpray, alt: 'Technician in a protective suit spraying mold along a wall with a pump sprayer' },
+    { image: heroCorner, alt: 'Black mold spreading across a wall corner next to a window' },
+    { image: heroBaseboard, alt: 'Technician in a protective suit and yellow gloves spraying mold at the base of a wall' },
   ],
 };
 
@@ -116,7 +135,7 @@ export const services: {
     title: 'Basement Mold Removal Oakville',
     text: 'Basements hide moisture well. Finished walls, insulation and flooring can look normal from the room while damp materials sit behind them. We define the affected area before deciding how much needs to come out.',
     page: 'basement',
-    alt: 'Black mold spreading across a basement wall above the baseboard',
+    alt: 'Damp unfinished stone basement with water on the concrete floor',
     image: pBasement,
   },
   {
@@ -144,7 +163,7 @@ export const services: {
     title: 'Commercial Mold Remediation Oakville',
     text: 'For offices, retail units, rental properties and other commercial spaces, the scope needs to consider more than mold alone. Access, containment, occupied areas and downtime all affect how the work should be planned.',
     page: 'commercial',
-    alt: 'Technician in a protective suit spraying treatment in a large empty room',
+    alt: 'Technician in a protective suit spraying mold-covered walls in an empty room',
     image: pCommercial,
   },
   {
@@ -165,11 +184,19 @@ export const services: {
     title: 'Post-Remediation Verification',
     text: 'The work should have a finish line. That can include a visual review, moisture checks and project documentation. Where independent clearance testing is appropriate, it can be arranged separately.',
     page: null,
-    alt: 'Technician in a protective suit treating the edge of a cleaned room with a sprayer',
+    alt: 'Technician in a protective suit in a clean, treated room after mold remediation',
     image: pVerification,
   },
 ];
 export const servicesTitle = 'Mold Removal & Remediation Services in Oakville';
+
+// Заголовок над тёмной полосой эмблем-достижений (добавлен по просьбе владельца 2026-10-02)
+export const credentialsCopy = {
+  eyebrow: 'Why Oakville Homeowners Trust Us',
+  title: 'Proven Experience.',
+  titleAccent: 'A Process You Can Check.',
+  intro: 'Every project starts with a written scope and a moisture check — so you know what is being removed, why it is being removed and what it will cost before any work begins.',
+};
 
 export const whyUs = {
   eyebrow: 'Why Choose Us',
@@ -270,7 +297,7 @@ export const typical = {
       title: 'Commercial Water Loss',
       property: 'Property: Office, retail or managed property',
       text: 'Commercial remediation needs to account for access, occupied areas and business interruption as well as the physical damage itself.',
-      alt: 'Technician spraying mold along the base of a wall in a commercial room',
+      alt: 'Technician in a protective suit and blue gloves spraying along the base of a tiled wall',
       image: tCommercial,
     },
   ],

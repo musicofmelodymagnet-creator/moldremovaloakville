@@ -17,7 +17,7 @@ const label = 'mb-1.5 block text-sm font-semibold text-ink';
 const iconCls = 'pointer-events-none absolute top-1/2 left-4 size-[18px] -translate-y-1/2 text-ink/40';
 const err = 'mt-1.5 hidden text-sm text-terracotta-800';
 ---
-<form action="/send.php" method="post" class="grid gap-4" data-lead-form={variant} novalidate>
+<form action="/send.php" method="post" class:list={['grid gap-4', variant === 'hero' && 'lg:h-full lg:grid-rows-[auto_auto_1fr_auto_auto]']} data-lead-form={variant} novalidate>
   <input type="hidden" name="form_id" value={variant} />
   <input type="hidden" name="ts" value="" data-ts />
   <!-- honeypot: invisible to people, bots fill it -->
@@ -69,18 +69,18 @@ const err = 'mt-1.5 hidden text-sm text-terracotta-800';
     <p id={`${p}-property-error`} class={err} data-error-for="property_type"></p>
   </div>
 
-  <div>
+  <div class="flex flex-col">
     <label for={`${p}-message`} class={label}>{messageLabel} <span class="text-terracotta-700" aria-hidden="true">*</span></label>
-    <div class="relative">
+    <div class="relative flex flex-1 flex-col">
       <Icon name="file" class="pointer-events-none absolute top-4 left-4 size-[18px] text-ink/40" />
-      <textarea id={`${p}-message`} name="message" rows="3" required minlength="5" maxlength="2000" class:list={[field, 'resize-y']} aria-describedby={`${p}-message-error`}></textarea>
+      <textarea id={`${p}-message`} name="message" rows="3" required minlength="5" maxlength="2000" class:list={[field, 'flex-1 resize-y']} aria-describedby={`${p}-message-error`}></textarea>
     </div>
     <p id={`${p}-message-error`} class={err} data-error-for="message"></p>
   </div>
 
   <p class="hidden rounded-2xl bg-terracotta-100 px-4 py-3 text-sm text-terracotta-800" data-form-error role="alert"></p>
 
-  <button type="submit" class="btn-primary mt-1 w-full text-lg" data-submit>
+  <button type="submit" class="btn-primary mt-1 w-full text-center text-lg whitespace-normal" data-submit>
     <span data-submit-label>{cta.submit}</span>
     <Icon name="arrow" class="size-5" />
   </button>

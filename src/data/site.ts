@@ -11,6 +11,12 @@ import avatarJason from '../assets/reviews/jason-turner.jpg';
 import avatarMatthew from '../assets/reviews/matthew-reed.jpg';
 import avatarSarah from '../assets/reviews/sarah-collins.jpg';
 import avatarDaniel from '../assets/reviews/daniel-foster.jpg';
+// Эмблемы достижений (прозрачный фон, на тёмной полосе). Цифры нарисованы на картинке — меняешь value, меняй и эмблему.
+import achYears from '../assets/emblems/years-combined-experience.png';
+import achProjects from '../assets/emblems/remediation-projects.png';
+import achEmergency from '../assets/emblems/emergency-response-24-7.png';
+import achLiability from '../assets/emblems/liability-coverage.png';
+import achIicrc from '../assets/emblems/iicrc-trained-technicians.png';
 
 export const SHOW_DRAFT = import.meta.env.DEV || import.meta.env.PUBLIC_SHOW_DRAFT === 'true';
 
@@ -43,13 +49,12 @@ export const site = {
 
 // Achievement strip — 6 эмблем. value: null → в production не показывается.
 // Значения подтверждены владельцем 2026-10-02.
-export const achievements: { icon: string; value: string | null; draft: string; label: string }[] = [
-  { icon: 'calendar', value: '8+', draft: '[XX]+', label: 'Years Combined Experience' },
-  { icon: 'home', value: '250+', draft: '[XXX]+', label: 'Remediation Projects' },
-  { icon: 'clock', value: '24/7', draft: '[XX]-Hour', label: 'Emergency Response' },
-  { icon: 'shield', value: '$2 Million', draft: '[$X Million]', label: 'Liability Coverage' },
-  { icon: 'badge', value: 'IICRC-Trained', draft: '[CREDENTIAL]', label: 'Technicians' },
-  { icon: 'award', value: 'Up to 10-Year', draft: '[X]-Year', label: 'Workmanship Warranty' },
+export const achievements: { icon: string; value: string | null; draft: string; label: string; image?: ImageMetadata }[] = [
+  { icon: 'calendar', value: '12+', draft: '[XX]+', label: 'Years Combined Experience', image: achYears },
+  { icon: 'home', value: '350+', draft: '[XXX]+', label: 'Remediation Projects', image: achProjects },
+  { icon: 'clock', value: '24/7', draft: '[XX]-Hour', label: 'Emergency Response', image: achEmergency },
+  { icon: 'shield', value: '$2 Million+', draft: '[$X Million]', label: 'Liability Coverage', image: achLiability },
+  { icon: 'badge', value: 'IICRC-Trained', draft: '[CREDENTIAL]', label: 'Technicians', image: achIicrc },
 ];
 
 // Professional Standards strip. verified: false → в production скрыто (пункты со * в тексте).

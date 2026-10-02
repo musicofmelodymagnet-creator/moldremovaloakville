@@ -31,4 +31,4 @@ pnpm-debug.log*
 send-config.php
 
 # raw photo sources (used copies live in src/assets/)
-Photos/
+/Photos/

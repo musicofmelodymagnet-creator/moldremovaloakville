@@ -16,37 +16,26 @@ const { slides } = Astro.props;
       aria-label={`${i + 1} of ${slides.length}`}
       aria-hidden={i === 0 ? 'false' : 'true'}
     >
-      <Photo image={s.image} alt={s.alt} priority={i === 0} sizes="(min-width: 1024px) 66vw, 100vw" hint={false} bare class="object-[68%_12%]" />
+      <Photo image={s.image} alt={s.alt} priority={i === 0} sizes="(min-width: 1280px) 784px, (min-width: 1024px) 62vw, 100vw" hint={false} bare class="object-[68%_12%]" />
     </div>
   ))}
 </div>
 
 <script>
+  // Автосмена слайдов без ручного листания; индикатор (data-dot) только показывает текущий слайд.
   document.querySelectorAll<HTMLElement>('[data-hero]').forEach((hero) => {
     const slides = [...hero.querySelectorAll<HTMLElement>('[data-slide]')];
-    const dots = [...hero.querySelectorAll<HTMLButtonElement>('[data-dot]')];
-    if (slides.length < 2) return;
+    const dots = [...hero.querySelectorAll<HTMLElement>('[data-dot]')];
+    if (slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let index = 0;
-    let timer: number | undefined;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const show = (n: number) => {
-      index = (n + slides.length) % slides.length;
+    window.setInterval(() => {
+      index = (index + 1) % slides.length;
       slides.forEach((s, i) => {
         s.classList.toggle('opacity-100', i === index);
         s.classList.toggle('opacity-0', i !== index);
         s.setAttribute('aria-hidden', String(i !== index));
       });
-      dots.forEach((d, i) => d.setAttribute('aria-current', String(i === index)));
-    };
-    const stop = () => window.clearInterval(timer);
-    const start = () => { if (!reduce) { stop(); timer = window.setInterval(() => show(index + 1), 6000); } };
-
-    hero.querySelector('[data-prev]')?.addEventListener('click', () => { show(index - 1); start(); });
-    hero.querySelector('[data-next]')?.addEventListener('click', () => { show(index + 1); start(); });
-    dots.forEach((d, i) => d.addEventListener('click', () => { show(i); start(); }));
-    hero.addEventListener('focusin', stop);
-    hero.addEventListener('focusout', start);
-    start();
+      dots.forEach((d, i) => d.toggleAttribute('data-active', i === index));
+    }, 6000);
   });
 </script>

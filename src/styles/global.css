@@ -12,6 +12,8 @@
   --font-display: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
   /* Serif — only for the reviews block heading (per design reference) */
   --font-serif: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+  /* Handwritten accent — only for short notes next to buttons */
+  --font-hand: "Caveat Variable", "Bradley Hand", cursive;
 
   --color-ivory: #f3ede3;
   --color-ivory-50: #faf7f1;
@@ -32,6 +34,7 @@
 
   --color-gold: #d4af72;
   --color-gold-100: #f5ead6;
+  --color-gold-200: #ecd8b0;
   --color-gold-700: #6f5420;
 
 

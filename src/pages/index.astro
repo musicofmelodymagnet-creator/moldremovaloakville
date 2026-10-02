@@ -12,7 +12,7 @@ import MoistureDiagram from '../components/MoistureDiagram.astro';
 import RemovalCompare from '../components/RemovalCompare.astro';
 import { site, achievements, standards, pricing, reviews, timeAgo, pageLink, SHOW_DRAFT } from '../data/site';
 import {
-  meta, cta, hero, problems, services, servicesTitle, whyUs, utp1, utp2, checklist, typical,
+  meta, cta, hero, credentialsCopy, problems, services, servicesTitle, whyUs, utp1, utp2, checklist, typical,
   process, local, pricingCopy, reviewsCopy, standardsNote, equipment, oakville, faqCopy, faq, finalCta,
 } from '../data/home';
 
@@ -102,90 +102,128 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
 
   <!-- ============ HERO ============ -->
   <!--
-    Desktop: [H1 in one line] → [photo with lead overlaid | form] → [tagline + CTA | body text] → [trust panel]
-    Mobile (по ТЗ): H1 → photo → tagline + CTA → form → body text → trust
+    Desktop: [H1 in one line] → [badge] → [photo 16:9 | form] → [rotating phrases | form] → [6 emblems | form, bottoms aligned] → [tagline + call | body text] → [note]
+    Mobile: H1 → badge → photo → rotating phrases → emblems → tagline + call → form → body text → note
   -->
   <section class="bg-ivory-50 pt-8 pb-24 sm:pt-12 lg:pb-32" data-hero aria-labelledby="hero-title">
-    <div class="container-x grid gap-x-12 gap-y-8 lg:grid-cols-12 lg:gap-y-14">
+    <div class="container-x grid gap-x-12 gap-y-8 lg:grid-cols-12 lg:gap-y-10">
 
-      <h1 id="hero-title" class="reveal order-1 font-display text-[clamp(1.85rem,7.3vw,6.4rem)] leading-none font-extrabold tracking-tight whitespace-nowrap lg:col-span-12">
-        Mold Removal <span class="text-terracotta-700">Oakville</span>
+      <h1 id="hero-title" class="reveal order-1 font-display text-[clamp(1.4rem,7.9vw,6.4rem)] leading-none font-extrabold tracking-tight whitespace-nowrap lg:col-span-12">
+        Mold Removal <span class="text-terracotta-700">Oakvill<span class="relative inline-block">e<svg class="pointer-events-none absolute top-[-0.1em] left-[0.04em] w-[0.5em] -rotate-12" viewBox="0 0 48 40" aria-hidden="true"><defs><linearGradient id="leaf-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3f7a32" /><stop offset="1" stop-color="#8cc152" /></linearGradient></defs><path d="M7 34C10 19 23 6 45 3c-2 19-14 31-35 31Z" fill="url(#leaf-g)" /><path d="M8 33C17 25 27 15 40 7" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round" /><path d="M9 33c-3 2-5 4-7 6" fill="none" stroke="#3f7a32" stroke-width="2.6" stroke-linecap="round" /></svg></span></span>
       </h1>
 
-      <!-- Photo card; the lead line sits on the photo at the bottom -->
-      <div class="relative isolate order-2 aspect-[4/5] overflow-hidden rounded-[2rem] bg-sage-900 sm:aspect-[16/11] lg:col-span-8 lg:row-start-2 lg:aspect-auto lg:min-h-[600px]">
+      <p class="reveal reveal-d1 order-2 -mt-3 inline-flex items-center gap-2 justify-self-start rounded-[1.25rem] sm:gap-3 border border-gold/45 bg-sage-900 px-3.5 py-1.5 font-display text-[clamp(0.6rem,2.85vw,0.72rem)] leading-snug font-bold tracking-[0.03em] sm:tracking-[0.08em] text-gold-200 uppercase sm:rounded-full sm:px-5 sm:py-1.5 sm:text-[0.88rem] lg:col-span-12 lg:-mt-4">
+        <span class="size-2 shrink-0 rounded-full bg-gold sm:size-2.5" aria-hidden="true"></span>{hero.badge}
+      </p>
+
+      <!-- Photo card 16:9; slogan across the full width -->
+      <div class="@container relative isolate order-3 aspect-video overflow-hidden rounded-[2rem] bg-sage-900 lg:col-span-8 lg:row-start-3">
         <HeroSlideshow slides={hero.slides} />
-        <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(24,29,22,.86)_0%,rgba(24,29,22,.42)_30%,rgba(24,29,22,0)_55%)]" aria-hidden="true"></div>
-        <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 sm:p-10">
-          <p class="reveal reveal-d1 max-w-xl font-display text-2xl leading-[1.15] font-extrabold text-white drop-shadow-[0_2px_18px_rgba(0,0,0,.4)] sm:text-4xl">{hero.lead}</p>
-          {hero.slides.length > 1 && (
-            <div class="flex shrink-0 flex-col items-end gap-3">
-              <div class="flex gap-2">
-                <button type="button" class="grid size-11 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/35" data-prev aria-label="Previous photo"><Icon name="chevron-left" class="size-5" /></button>
-                <button type="button" class="grid size-11 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/35" data-next aria-label="Next photo"><Icon name="chevron-right" class="size-5" /></button>
-              </div>
-              <div class="hidden gap-2 sm:flex">
-                {hero.slides.map((_, i) => (
-                  <button type="button" class="h-1.5 w-6 rounded-full bg-white/40 transition aria-[current=true]:w-10 aria-[current=true]:bg-white" data-dot aria-current={i === 0 ? 'true' : 'false'} aria-label={`Show photo ${i + 1}`}></button>
-                ))}
-              </div>
-            </div>
-          )}
+        <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(24,29,22,.88)_0%,rgba(24,29,22,.45)_32%,rgba(24,29,22,0)_60%)]" aria-hidden="true"></div>
+        <div class="absolute inset-x-0 bottom-0 px-[4cqw] pb-4 sm:pb-6">
+          <p class="reveal reveal-d1 text-center font-display text-[clamp(1.1rem,3.3cqw,3rem)] leading-[1.15] font-extrabold text-white drop-shadow-[0_2px_18px_rgba(0,0,0,.4)]">{hero.lead}</p>
         </div>
       </div>
 
+      <!-- Rotating phrases under the photo (all stacked in one grid cell → no layout shift) -->
+      <div class="order-3 -mt-2 grid text-center lg:col-span-8 lg:row-start-4 lg:-mt-3" data-rotator>
+        {hero.rotating.map((t, i) => (
+          <p class:list={['[grid-area:1/1] self-center font-display text-[1.15rem] leading-snug font-extrabold text-balance text-terracotta-700 transition-opacity duration-700 sm:text-2xl', i === 0 ? 'opacity-100' : 'opacity-0']} aria-hidden={i === 0 ? undefined : 'true'} data-rotate>{t}</p>
+        ))}
+      </div>
+
+      <!-- Emblems (white card: the emblem images have a white background) -->
+      <ul class="order-4 -mt-2 grid grid-cols-3 gap-x-3 gap-y-6 rounded-[1.75rem] bg-white px-3 py-6 shadow-[0_24px_60px_-44px_rgba(24,29,22,.45)] sm:grid-cols-6 sm:px-5 lg:col-span-8 lg:row-start-5 lg:-mt-3">
+        {hero.trust.map((t) => (
+          <li class="flex flex-col items-center text-center">
+            <Image src={t.image} alt={t.title} width={144} densities={[1, 2]} class="h-auto w-full max-w-[7.6rem]" />
+            <p class="mt-3 text-[0.74rem] leading-snug text-ink-soft sm:text-[0.78rem]">{t.text}</p>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Quote form -->
+      <div id="estimate" class="reveal reveal-d2 order-6 scroll-mt-28 self-start rounded-[2rem] bg-white p-6 shadow-[0_30px_70px_-40px_rgba(24,29,22,.45)] sm:p-9 lg:col-span-4 lg:col-start-9 lg:row-span-3 lg:row-start-3 lg:flex lg:flex-col lg:self-stretch">
+        <h2 class="font-display text-3xl font-extrabold">{cta.estimate}</h2>
+        <div class="mt-6 lg:flex-1"><QuoteForm variant="hero" /></div>
+      </div>
+
       <!-- Tagline + calls to action -->
-      <div class="order-3 lg:col-span-5 lg:row-start-3">
+      <div class="order-5 lg:col-span-5 lg:row-start-6">
         <p class="reveal reveal-d2 font-display text-3xl leading-[1.15] font-extrabold sm:text-4xl">{hero.tagline}</p>
-        <div class="reveal reveal-d3 mt-8 flex flex-wrap gap-3">
+        <div class="reveal reveal-d3 mt-7 flex flex-wrap gap-3">
+          <span class="flex items-center gap-1 pr-1 font-hand text-[1.7rem] leading-[0.95] text-ink sm:text-[1.9rem]" aria-hidden="true">
+            <span class="-rotate-6 whitespace-pre-line">{cta.callNote.replace(' with ', ' with\n')}</span>
+            <svg class="mt-3 h-8 w-12 shrink-0 rotate-[50deg] text-ink sm:rotate-0" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9c8 12 21 15 37 11" /><path d="M33 13l8 7-9 5" /></svg>
+          </span>
           <PhoneButton label="call" class="btn-primary text-lg" />
           <a href="#estimate" class="btn-outline text-lg lg:hidden">{cta.estimate} <Icon name="arrow" class="size-5" /></a>
         </div>
       </div>
 
-      <!-- Quote form -->
-      <div id="estimate" class="reveal reveal-d2 order-4 scroll-mt-28 self-start rounded-[2rem] bg-white p-6 shadow-[0_30px_70px_-40px_rgba(24,29,22,.45)] sm:p-9 lg:col-span-4 lg:col-start-9 lg:row-start-2">
-        <h2 class="font-display text-3xl font-extrabold">{cta.estimate}</h2>
-        <div class="mt-6"><QuoteForm variant="hero" /></div>
-      </div>
-
       <!-- Body copy -->
-      <div class="order-5 space-y-5 text-[1.05rem] leading-relaxed text-ink-soft sm:text-lg lg:col-span-7 lg:col-start-6 lg:row-start-3 lg:border-l lg:border-ink/10 lg:pl-12">
+      <div class="order-7 space-y-5 text-[1.05rem] leading-relaxed text-ink-soft sm:text-lg lg:col-span-7 lg:col-start-6 lg:row-start-6 lg:border-l lg:border-ink/10 lg:pl-12">
         {hero.paragraphs.map((p) => <p>{p}</p>)}
       </div>
 
-      <!-- Trust panel -->
-      <div class="order-6 lg:col-span-12 lg:row-start-4">
-        <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-[1.75rem] bg-ink/8 sm:grid-cols-3 lg:grid-cols-6">
-          {hero.trust.map((t, i) => (
-            <li class="flex flex-col items-start gap-4 bg-white p-6 sm:p-7">
-              <span class:list={['grid size-11 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={t.icon} class="size-5" /></span>
-              <span class="text-[0.98rem] leading-snug font-bold">{t.label}</span>
-            </li>
-          ))}
-        </ul>
-        <p class="mt-6 flex max-w-4xl gap-3 text-sm leading-relaxed text-ink-soft">
-          <span class="mt-1.5 h-px w-6 shrink-0 bg-gold" aria-hidden="true"></span>{hero.note}
-        </p>
-      </div>
+      <!-- Health Canada note -->
+      <p class="order-8 flex max-w-4xl gap-3 text-sm leading-relaxed text-ink-soft lg:col-span-12 lg:row-start-7">
+        <span class="mt-1.5 h-px w-6 shrink-0 bg-gold" aria-hidden="true"></span>{hero.note}
+      </p>
     </div>
   </section>
 
+  <script>
+    // Фразы под фото hero: плавная смена каждые 3,5 с (с prefers-reduced-motion — остаётся первая)
+    document.querySelectorAll<HTMLElement>('[data-rotator]').forEach((box) => {
+      const items = [...box.querySelectorAll<HTMLElement>('[data-rotate]')];
+      if (items.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      let i = 0;
+      window.setInterval(() => {
+        i = (i + 1) % items.length;
+        items.forEach((el, n) => {
+          el.classList.toggle('opacity-100', n === i);
+          el.classList.toggle('opacity-0', n !== i);
+          if (n === i) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden', 'true');
+        });
+      }, 3500);
+    });
+  </script>
+
   <!-- ============ ACHIEVEMENT STRIP (only verified values in production) ============ -->
   {shownAchievements.length > 0 && (
-    <section class="bg-sage-900 text-white" aria-label="Company credentials">
-      <ul class="container-x grid grid-cols-2 gap-y-12 py-16 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x lg:divide-white/10">
+    <section class="bg-sage-900 py-20 text-white sm:py-24 lg:py-28" aria-labelledby="credentials-title">
+      <div class="container-x">
+        <div class="mx-auto max-w-4xl text-center">
+          <p class="inline-flex items-center gap-3 text-xs font-semibold tracking-[0.22em] text-gold uppercase">
+            <span class="hidden h-px w-8 bg-gold sm:block" aria-hidden="true"></span>{credentialsCopy.eyebrow}<span class="hidden h-px w-8 bg-gold sm:block" aria-hidden="true"></span>
+          </p>
+          <h2 id="credentials-title" class="mt-5 font-display text-4xl leading-[1.05] font-extrabold text-balance sm:text-5xl lg:text-6xl">
+            {credentialsCopy.title} <span class="text-gold sm:block">{credentialsCopy.titleAccent}</span>
+          </h2>
+          <p class="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">{credentialsCopy.intro}</p>
+        </div>
+      <ul class="mt-14 flex flex-wrap justify-center gap-x-4 gap-y-8 sm:gap-x-8 lg:mt-20 lg:flex-nowrap lg:justify-between">
         {shownAchievements.map((a, i) => (
-          <li class="flex flex-col items-center px-3 text-center">
-            <span class:list={['grid size-16 place-items-center rounded-full ring-1 ring-white/25 ring-offset-4 ring-offset-sage-900', emblems[i % emblems.length]]}>
-              <Icon name={a.icon} class="size-7" />
-            </span>
-            <p class="mt-5 font-display text-2xl leading-none font-extrabold text-gold"><Draft value={a.value} placeholder={a.draft} /></p>
-            <p class="mt-2 text-[0.95rem] leading-snug font-medium text-white/85">{a.label}</p>
-            {SHOW_DRAFT && !a.value && <p class="mt-2 text-[0.65rem] font-bold tracking-wider text-gold uppercase">Status: verify before publishing</p>}
-          </li>
+          a.value && a.image ? (
+            <li class="flex w-[44%] flex-col items-center text-center sm:w-[28%] lg:w-auto lg:flex-1">
+              <Image src={a.image} alt="" width={176} densities={[1, 2]} class="h-[8.1rem] w-auto max-w-full object-contain object-bottom sm:h-36 lg:h-[10.8rem]" />
+              <p class="mt-4 font-display text-xl leading-none font-extrabold whitespace-nowrap text-gold sm:text-2xl">{a.value}</p>
+              <p class="mt-2 text-[0.95rem] leading-snug font-medium text-white/85">{a.label}</p>
+            </li>
+          ) : (
+            <li class="flex w-[44%] flex-col items-center px-3 text-center sm:w-[28%] lg:w-auto lg:flex-1">
+              <span class:list={['grid size-16 place-items-center rounded-full ring-1 ring-white/25 ring-offset-4 ring-offset-sage-900', emblems[i % emblems.length]]}>
+                <Icon name={a.icon} class="size-7" />
+              </span>
+              <p class="mt-5 font-display text-2xl leading-none font-extrabold text-gold"><Draft value={a.value} placeholder={a.draft} /></p>
+              <p class="mt-2 text-[0.95rem] leading-snug font-medium text-white/85">{a.label}</p>
+              {SHOW_DRAFT && !a.value && <p class="mt-2 text-[0.65rem] font-bold tracking-wider text-gold uppercase">Status: verify before publishing</p>}
+            </li>
+          )
         ))}
       </ul>
+      </div>
     </section>
   )}
 
