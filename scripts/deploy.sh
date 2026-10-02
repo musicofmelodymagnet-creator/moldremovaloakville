@@ -33,7 +33,7 @@ echo "▸ 1/4 Сборка"
 npm run build --silent
 
 echo "▸ 2/4 Выкладка на $DEPLOY_PATH $([[ $DRY == 1 ]] && echo '(пробный режим, ничего не меняется)')"
-RSYNC_FLAGS=(-rltz --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r --itemize-changes --exclude .DS_Store)
+RSYNC_FLAGS=(-rltz --omit-dir-times --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r --itemize-changes --exclude .DS_Store)
 [[ $DRY == 1 ]] && RSYNC_FLAGS+=(--dry-run)
 changes=$(with_pass rsync "${RSYNC_FLAGS[@]}" -e "$SSH" dist/ "$REMOTE:$DEPLOY_PATH/") || { echo "$changes"; echo "✗ rsync завершился с ошибкой"; exit 1; }
 uploads=$(printf '%s\n' "$changes" | grep -E '^<f' || true)
