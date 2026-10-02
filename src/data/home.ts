@@ -54,7 +54,7 @@ export const hero = {
   h1: 'Mold Removal Oakville',
   badge: '24/7 · Same-Day Response · Licensed & Insured',
   lead: 'Mold does not always stop where the stain stops.',
-  // Сменяющиеся фразы под фото hero (каждые 3,5 с)
+  // Фразы поверх фото hero (вместе с lead): меняются одновременно со слайдом, в случайном порядке
   rotating: [
     'The stain may be small. The moisture problem may not be.',
     'A clean-looking wall does not prove the problem is gone.',

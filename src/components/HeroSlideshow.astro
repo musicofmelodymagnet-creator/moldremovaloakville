@@ -22,20 +22,32 @@ const { slides } = Astro.props;
 </div>
 
 <script>
-  // Автосмена слайдов без ручного листания; индикатор (data-dot) только показывает текущий слайд.
+  // Один таймер на фото и фразы: каждые 3,5 с меняется слайд и одновременно — фраза.
+  // Фраза выбирается случайно (не повторяя текущую) и не привязана к конкретному фото.
+  const INTERVAL = 3500;
   document.querySelectorAll<HTMLElement>('[data-hero]').forEach((hero) => {
     const slides = [...hero.querySelectorAll<HTMLElement>('[data-slide]')];
-    const dots = [...hero.querySelectorAll<HTMLElement>('[data-dot]')];
-    if (slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let index = 0;
-    window.setInterval(() => {
-      index = (index + 1) % slides.length;
-      slides.forEach((s, i) => {
-        s.classList.toggle('opacity-100', i === index);
-        s.classList.toggle('opacity-0', i !== index);
-        s.setAttribute('aria-hidden', String(i !== index));
+    const phrases = [...hero.querySelectorAll<HTMLElement>('[data-rotate]')];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (slides.length < 2 && phrases.length < 2) return;
+
+    const activate = (list: HTMLElement[], index: number) =>
+      list.forEach((el, n) => {
+        el.classList.toggle('opacity-100', n === index);
+        el.classList.toggle('opacity-0', n !== index);
+        if (n === index) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden', 'true');
       });
-      dots.forEach((d, i) => d.toggleAttribute('data-active', i === index));
-    }, 6000);
+
+    let slide = 0;
+    let phrase = 0;
+    window.setInterval(() => {
+      if (slides.length > 1) { slide = (slide + 1) % slides.length; activate(slides, slide); }
+      if (phrases.length > 1) {
+        let next = phrase;
+        while (next === phrase) next = Math.floor(Math.random() * phrases.length);
+        phrase = next;
+        activate(phrases, phrase);
+      }
+    }, INTERVAL);
   });
 </script>
