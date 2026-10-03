@@ -228,18 +228,17 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
       <div class="lg:sticky lg:top-32 lg:self-start">
         <SectionHead id="problems-title" title={problems.title} intro={problems.intro} size="xl" />
         <CallWithNote note={problems.callNote} class="mt-10" />
-        <a href="#estimate" class="btn-outline mt-4">{cta.estimate} <Icon name="arrow" class="size-4" /></a>
+        <a href="#estimate" class="btn mt-4 min-w-[16.5rem] bg-sage-800 text-lg text-white shadow-[0_14px_30px_-14px_rgba(44,52,40,.7)] hover:-translate-y-0.5 hover:bg-sage-900" data-same-width>{cta.estimate} <Icon name="arrow" class="size-5" /></a>
         <div class="mt-12 aspect-[4/3] max-w-xl overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_60px_-40px_rgba(46,42,38,.45)]"><Photo image={problems.photo.image} alt={problems.photo.alt} sizes="(min-width: 1024px) 480px, 100vw" /></div>
       </div>
-      <ol class="grid gap-x-4 gap-y-9 pt-5 sm:grid-cols-2">
+      <ul class="grid gap-4 sm:grid-cols-2">
         {problems.items.map((p, i) => (
-          <li class="relative flex gap-4 rounded-3xl bg-white px-6 pt-8 pb-6 shadow-[0_1px_2px_rgba(46,42,38,.04)]">
-            <span class:list={['absolute -top-[1.1rem] left-1/2 grid size-9 -translate-x-1/2 place-items-center rounded-full font-display text-sm font-extrabold ring-4 ring-ivory-50', accents[i % accents.length]]} aria-hidden="true">{i + 1}</span>
+          <li class="flex gap-4 rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgba(46,42,38,.04)]">
             <GlossCheck uid={i} class="size-10 shrink-0 self-center" />
-            <span class="self-center text-[1.05rem] leading-snug font-medium">{p}</span>
+            <span class="self-center text-[1.05rem] leading-snug font-bold">{p}</span>
           </li>
         ))}
-      </ol>
+      </ul>
     </div>
   </section>
 
@@ -268,17 +267,22 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
     </div>
   </section>
 
-  <!-- ============ WHY CHOOSE US ============ -->
+  <!-- ============ WHY CHOOSE US — principles ============ -->
   <section id="why-us" class="section" aria-labelledby="why-title">
     <div class="container-x">
       <SectionHead id="why-title" eyebrow={whyUs.eyebrow} title={whyUs.title} center />
-      <div class="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+      <div class="mt-16 grid gap-6 lg:mt-20 lg:grid-cols-2 lg:gap-8">
         {whyUs.items.map((w, i) => (
-          <div class="card">
-            <span class:list={['grid size-14 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={w.icon} class="size-7" /></span>
-            <h3 class="mt-7 text-2xl font-extrabold">{w.title}</h3>
-            <p class="mt-3 leading-relaxed text-ink-soft">{w.text}</p>
-          </div>
+          <article class="group relative isolate flex flex-col overflow-hidden rounded-[2rem] bg-white p-7 shadow-[0_1px_2px_rgba(46,42,38,.04),0_24px_60px_-36px_rgba(46,42,38,.32)] sm:p-10 lg:p-12">
+            <Icon name={w.icon} class="pointer-events-none absolute -right-6 -bottom-6 -z-10 size-44 text-ink/[0.045] transition duration-500 group-hover:scale-105" strokeWidth={1.25} />
+            <div class="flex items-center gap-4">
+              <span class:list={['grid size-16 shrink-0 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={w.icon} class="size-8" /></span>
+              <span class="text-xs font-semibold tracking-[0.22em] text-ink-soft uppercase">{w.tag}</span>
+            </div>
+            <h3 class="mt-8 font-display text-2xl leading-[1.2] font-extrabold text-balance sm:text-[1.75rem]">{w.title}</h3>
+            <span class="mt-6 block h-1 w-14 rounded-full bg-gold" aria-hidden="true"></span>
+            <p class="mt-6 text-[1.05rem] leading-relaxed text-ink-soft sm:text-lg">{w.text}</p>
+          </article>
         ))}
       </div>
     </div>

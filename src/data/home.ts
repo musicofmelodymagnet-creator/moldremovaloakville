@@ -203,16 +203,35 @@ export const credentialsCopy = {
   intro: 'Every project starts with a written scope and a moisture check — so you know what is being removed, why it is being removed and what it will cost before any work begins.',
 };
 
+// Why Choose Us — принципы от владельца 2026-10-02 (title = первое предложение пункта, text — остальное, дословно)
 export const whyUs = {
   eyebrow: 'Why Choose Us',
-  title: 'A Clearer Way to Handle Mold Remediation',
+  title: 'The Principles Our Clients Value',
   items: [
-    { icon: 'file', title: 'Written Scope Before Work', text: 'Before demolition starts, you should be able to see what is being removed, what is staying and why.' },
-    { icon: 'droplet', title: 'Moisture Source First', text: 'Cleaning visible growth while leaving the water problem behind is not a complete solution.' },
-    { icon: 'fan', title: 'Controlled Work Area', text: 'When contaminated materials need to be disturbed, containment and HEPA controls help keep the work limited to the area being treated.' },
-    { icon: 'ruler', title: 'Measured Before Expanded', text: 'One damp section does not automatically mean the entire room needs demolition. Moisture evidence helps decide where closer investigation is justified.' },
-    { icon: 'camera', title: 'Documented Work', text: 'Photos and written records give you something more useful than “trust us, it is done.”' },
-    { icon: 'flask', title: 'Testing When It Has a Purpose', text: 'If a test will not change the decision, we explain why it may not be necessary.' },
+    {
+      icon: 'flask',
+      tag: 'Testing',
+      title: 'We don’t recommend paid testing when the results won’t change the plan.',
+      text: 'Before suggesting a test, we explain what decision depends on its results. If we already know what needs to be done, we won’t ask you to spend money on testing you don’t need.',
+    },
+    {
+      icon: 'child',
+      tag: 'Children',
+      title: 'Your children’s safety comes first.',
+      text: 'Before work begins, we’ll discuss where your children will be, which areas will be off limits, and what should be moved out of the work area. Disturbing mold affected materials can release spores into the air, so children need to stay away from the work zone.',
+    },
+    {
+      icon: 'barrier',
+      tag: 'Containment',
+      title: 'One moldy wall shouldn’t become a problem throughout your home.',
+      text: 'Opening up affected materials can release dust and spores into nearby rooms. We contain the work area, plan the route for removing debris, and seal affected materials before carrying them out.',
+    },
+    {
+      icon: 'paw',
+      tag: 'Pets',
+      title: 'We look out for your pets, too.',
+      text: 'We’ll agree with you on where your cat or dog will stay during the work and put extra barriers in place to keep them out of the mold removal area. You won’t have to worry about your pet wandering among dust and tools.',
+    },
   ],
 };
 
