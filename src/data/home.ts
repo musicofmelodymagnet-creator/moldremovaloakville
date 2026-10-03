@@ -21,7 +21,9 @@ import tAttic from '../assets/photos/attic-mold-condensation-roof-sheathing.jpg'
 import tBathroom from '../assets/photos/bathroom-ceiling-mold-trim.jpg';
 import tWall from '../assets/photos/mold-behind-finished-wall-wallpaper.jpg';
 import tCommercial from '../assets/photos/commercial-water-loss-mold-treatment.jpg';
-import localPhoto from '../assets/photos/oakville-basement-water-intrusion.jpg';
+import basementStairs from '../assets/photos/oakville-basement-water-intrusion.jpg';
+import moldColonies from '../assets/photos/mold-colonies-petri-dish-macro.jpg';
+import moldPetri from '../assets/photos/mold-culture-petri-dish-sample.jpg';
 import heroSpray from '../assets/hero/mold-remediation-technician-spraying-wall.jpg';
 import heroCorner from '../assets/hero/black-mold-wall-corner-window.jpg';
 import heroBaseboard from '../assets/hero/mold-removal-technician-spraying-baseboard.jpg';
@@ -48,7 +50,7 @@ export const nav = [
   { label: 'Contact', href: '#contact' },
 ];
 
-export const cta = { estimate: 'Get Free Estimate', submit: 'Get Free Estimate', callNote: 'Speak with an expert' };
+export const cta = { estimate: 'Get Free Estimate', submit: 'Get Free Estimate', callNote: 'Speak with\nan expert' };
 
 export const hero = {
   h1: 'Mold Removal Oakville',
@@ -88,7 +90,9 @@ export const hero = {
 
 export const problems = {
   title: 'Problems We Solve',
-  intro: 'You may not know exactly what is behind the wall — and you should not have to diagnose it before calling.',
+  photo: { image: moldPetri, alt: 'Mold and bacteria colonies growing on red agar in a glass petri dish' },
+  intro: 'You may not know exactly what is behind the wall — and you should not have to diagnose it before calling. Tell us what you are noticing, and we will trace the moisture, check the affected materials and explain what actually needs to be done.',
+  callNote: 'Tell us\nwhat you see',
   items: [
     'A basement smells musty after rain',
     'Mold returns a few weeks after cleaning',
@@ -188,7 +192,8 @@ export const services: {
     image: pVerification,
   },
 ];
-export const servicesTitle = 'Mold Removal & Remediation Services in Oakville';
+// \n — перенос строки в заголовке (на десктопе 2 строки по центру)
+export const servicesTitle = 'Mold Removal & Remediation\nServices in Oakville';
 
 // Заголовок над тёмной полосой эмблем-достижений (добавлен по просьбе владельца 2026-10-02)
 export const credentialsCopy = {
@@ -325,7 +330,7 @@ export const local = {
     'It means that when mold appears after a water event, the water pathway matters just as much as the visible growth.',
   ],
   areasTitle: 'Areas served',
-  photo: { image: localPhoto, alt: 'Unfinished basement with concrete walls, wooden stairs and a small window' },
+  photo: { image: moldColonies, alt: 'Close-up of green, grey and yellow mold colonies growing in a clear dish' },
   areas: ['Old Oakville', 'Bronte', 'Glen Abbey', 'River Oaks', 'West Oak Trails', 'Joshua Creek', 'Iroquois Ridge', 'Clearview', 'Palermo', 'Rural Oakville'],
 };
 
@@ -362,7 +367,6 @@ export const reviewsCopy = {
   intro: 'Reviews from homeowners who trusted us for safe, effective mold removal.',
 };
 
-export const standardsNote = '* Exact credential, insurance amount and warranty terms must be verified before publication.';
 
 export const equipment = {
   eyebrow: 'Equipment & Controls',
@@ -390,7 +394,11 @@ export const oakville = {
   mapTitle: 'Oakville Ontario service area map',
 };
 
-export const faqCopy = { eyebrow: 'FAQ', title: 'Mold Removal Oakville — Questions Homeowners Actually Ask' };
+export const faqCopy = {
+  eyebrow: 'FAQ',
+  title: 'Mold Removal Oakville — Questions Homeowners Actually Ask',
+  photo: { image: basementStairs, alt: 'Unfinished basement with concrete walls, wooden stairs and a small window' },
+};
 export const faq = [
   {
     q: 'Do I need mold testing before mold removal?',

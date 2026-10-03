@@ -5,20 +5,32 @@ import Icon from '../components/Icon.astro';
 import Photo from '../components/Photo.astro';
 import Draft from '../components/Draft.astro';
 import PhoneButton from '../components/PhoneButton.astro';
+import CallWithNote from '../components/CallWithNote.astro';
+import GlossCheck from '../components/GlossCheck.astro';
 import QuoteForm from '../components/QuoteForm.astro';
 import SectionHead from '../components/SectionHead.astro';
 import HeroSlideshow from '../components/HeroSlideshow.astro';
 import MoistureDiagram from '../components/MoistureDiagram.astro';
 import RemovalCompare from '../components/RemovalCompare.astro';
-import { site, achievements, standards, pricing, reviews, timeAgo, pageLink, SHOW_DRAFT } from '../data/site';
+import { site, achievements, pricing, reviews, timeAgo, pageLink, SHOW_DRAFT } from '../data/site';
 import {
   meta, cta, hero, credentialsCopy, problems, services, servicesTitle, whyUs, utp1, utp2, checklist, typical,
-  process, local, pricingCopy, reviewsCopy, standardsNote, equipment, oakville, faqCopy, faq, finalCta,
+  process, local, pricingCopy, reviewsCopy, equipment, oakville, faqCopy, faq, finalCta,
 } from '../data/home';
+
+// Делит фразу на 2 строки по границе слова, ближайшей к середине
+const twoLines = (t: string): [string, string] => {
+  const w = t.split(' ');
+  let best = 1;
+  for (let i = 1; i < w.length; i++) {
+    const d = Math.abs(w.slice(0, i).join(' ').length - w.slice(i).join(' ').length);
+    if (d < Math.abs(w.slice(0, best).join(' ').length - w.slice(best).join(' ').length)) best = i;
+  }
+  return [w.slice(0, best).join(' '), w.slice(best).join(' ')];
+};
 
 // ---- visibility rules (NO FAKE DATA) ----
 const shownAchievements = achievements.filter((a) => a.value || SHOW_DRAFT);
-const shownStandards = standards.filter((s) => s.verified || SHOW_DRAFT);
 const hasPrices = pricing.every((p) => p.price);
 const showPriceTable = hasPrices || SHOW_DRAFT;
 const showReviews = reviews.length > 0 || SHOW_DRAFT;
@@ -122,9 +134,16 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
         <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(24,29,22,.88)_0%,rgba(24,29,22,.45)_32%,rgba(24,29,22,0)_60%)]" aria-hidden="true"></div>
         <div class="absolute inset-x-0 bottom-0 px-[4cqw] pb-4 sm:pb-6">
           <div class="reveal reveal-d1 grid text-center" data-rotator>
-            {[hero.lead, ...hero.rotating].map((t, i) => (
-              <p class:list={['[grid-area:1/1] self-end font-display text-[clamp(1.1rem,3.3cqw,3rem)] leading-[1.15] font-extrabold text-balance text-white drop-shadow-[0_2px_18px_rgba(0,0,0,.45)] transition-opacity duration-1000 ease-out-soft', i === 0 ? 'opacity-100' : 'opacity-0']} aria-hidden={i === 0 ? undefined : 'true'} data-rotate>{t}</p>
-            ))}
+            {[hero.lead, ...hero.rotating].map((t, i) => {
+              const [l1, l2] = twoLines(t);
+              // first guess before JS fine-tunes it (~0.58em per character of Manrope ExtraBold)
+              const size = (75 / (Math.max(l1.length, l2.length) * 0.58)).toFixed(2);
+              return (
+                <p class:list={['[grid-area:1/1] self-end font-display leading-[1.12] font-extrabold text-white drop-shadow-[0_2px_18px_rgba(0,0,0,.45)] transition-opacity duration-1000 ease-out-soft', i === 0 ? 'opacity-100' : 'opacity-0']} style={`font-size:${size}cqw`} aria-hidden={i === 0 ? undefined : 'true'} data-rotate>
+                  <span class="mx-auto block w-fit whitespace-nowrap">{l1}</span><span class="mx-auto block w-fit whitespace-nowrap">{l2}</span>
+                </p>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -148,12 +167,8 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
       <!-- Tagline + calls to action -->
       <div class="order-5 lg:col-span-5 lg:row-start-5">
         <p class="reveal reveal-d2 font-display text-3xl leading-[1.15] font-extrabold sm:text-4xl">{hero.tagline}</p>
-        <div class="reveal reveal-d3 mt-7 flex flex-wrap gap-3">
-          <span class="flex items-center gap-1 pr-1 font-hand text-[1.7rem] leading-[0.95] text-ink sm:text-[1.9rem]" aria-hidden="true">
-            <span class="-rotate-6 whitespace-pre-line">{cta.callNote.replace(' with ', ' with\n')}</span>
-            <svg class="mt-3 h-8 w-12 shrink-0 rotate-[50deg] text-ink sm:rotate-0" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9c8 12 21 15 37 11" /><path d="M33 13l8 7-9 5" /></svg>
-          </span>
-          <PhoneButton label="call" class="btn-primary text-lg" />
+        <div class="reveal reveal-d3 mt-7 flex flex-wrap items-center gap-3">
+          <CallWithNote note={cta.callNote} />
           <a href="#estimate" class="btn-outline text-lg lg:hidden">{cta.estimate} <Icon name="arrow" class="size-5" /></a>
         </div>
       </div>
@@ -211,24 +226,27 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
   <section class="section" aria-labelledby="problems-title">
     <div class="container-x grid gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:gap-24">
       <div class="lg:sticky lg:top-32 lg:self-start">
-        <SectionHead id="problems-title" title={problems.title} intro={problems.intro} />
-        <a href="#estimate" class="btn-primary mt-10">{cta.estimate} <Icon name="arrow" class="size-4" /></a>
+        <SectionHead id="problems-title" title={problems.title} intro={problems.intro} size="xl" />
+        <CallWithNote note={problems.callNote} class="mt-10" />
+        <a href="#estimate" class="btn-outline mt-4">{cta.estimate} <Icon name="arrow" class="size-4" /></a>
+        <div class="mt-12 aspect-[4/3] max-w-xl overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_60px_-40px_rgba(46,42,38,.45)]"><Photo image={problems.photo.image} alt={problems.photo.alt} sizes="(min-width: 1024px) 480px, 100vw" /></div>
       </div>
-      <ul class="grid gap-4 sm:grid-cols-2">
+      <ol class="grid gap-x-4 gap-y-9 pt-5 sm:grid-cols-2">
         {problems.items.map((p, i) => (
-          <li class="flex gap-4 rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgba(46,42,38,.04)]">
-            <span class:list={['grid size-10 shrink-0 place-items-center rounded-full font-display text-sm font-bold', accents[i % accents.length]]}>{String(i + 1).padStart(2, '0')}</span>
+          <li class="relative flex gap-4 rounded-3xl bg-white px-6 pt-8 pb-6 shadow-[0_1px_2px_rgba(46,42,38,.04)]">
+            <span class:list={['absolute -top-[1.1rem] left-1/2 grid size-9 -translate-x-1/2 place-items-center rounded-full font-display text-sm font-extrabold ring-4 ring-ivory-50', accents[i % accents.length]]} aria-hidden="true">{i + 1}</span>
+            <GlossCheck uid={i} class="size-10 shrink-0 self-center" />
             <span class="self-center text-[1.05rem] leading-snug font-medium">{p}</span>
           </li>
         ))}
-      </ul>
+      </ol>
     </div>
   </section>
 
   <!-- ============ MAIN SERVICES ============ -->
-  <section id="services" class="section bg-sage-100" aria-labelledby="services-title">
+  <section id="services" class="section bg-sage-900" aria-labelledby="services-title">
     <div class="container-x">
-      <SectionHead id="services-title" eyebrow="Main Services" title={servicesTitle} />
+      <SectionHead id="services-title" eyebrow="Main Services" title={servicesTitle} tone="dark" center wide />
       <div class="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {services.map((s, i) => {
           const href = pageLink(s.page);
@@ -406,7 +424,7 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
       <SectionHead id="pricing-title" eyebrow={pricingCopy.eyebrow} title={pricingCopy.title} intro={pricingCopy.intro} />
       <div class="mt-20 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
         {showPriceTable && (
-          <div class="card">
+          <div class="card min-w-0 max-[359px]:px-5">
             <p class="text-lg leading-relaxed">{pricingCopy.tableIntro}</p>
             <table class="mt-6 w-full text-left">
               <thead>
@@ -416,14 +434,14 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
                 {pricing.map((p) => (
                   <tr class="border-b border-ink/5 last:border-0">
                     <th scope="row" class="py-4 pr-4 font-medium">{p.project}</th>
-                    <td class="py-4 text-right font-display font-bold whitespace-nowrap"><Draft value={p.price} placeholder="[$ — verify]" /></td>
+                    <td class="py-4 text-right font-display font-bold sm:whitespace-nowrap"><Draft value={p.price && p.price.replace('–', '–\u200B')} placeholder="[$ — verify]" /></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-        <div class:list={['card', !showPriceTable && 'lg:col-span-2']}>
+        <div class:list={['card min-w-0 max-[359px]:px-5', !showPriceTable && 'lg:col-span-2']}>
           <h3 class="text-2xl font-extrabold">{pricingCopy.factorsTitle}</h3>
           <ul class="mt-6 flex flex-wrap gap-2.5">
             {pricingCopy.factors.map((f, i) => <li class:list={['rounded-full px-4 py-2 font-medium', accents[i % accents.length]]}>{f}</li>)}
@@ -486,28 +504,13 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
     </section>
   )}
 
-  <!-- ============ PROFESSIONAL STANDARDS STRIP ============ -->
-  <section class="border-y border-ink/8 bg-ivory-50" aria-label="Professional standards">
-    <div class="container-x py-12">
-      <ul class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 lg:grid-cols-8">
-        {shownStandards.map((s, i) => (
-          <li class="flex flex-col items-center text-center">
-            <span class:list={['grid size-12 place-items-center rounded-full', accents[i % accents.length]]}><Icon name={s.icon} class="size-6" /></span>
-            <span class="mt-3 text-sm leading-snug font-semibold">{s.label}{!s.verified && <span class="text-gold-700">*</span>}</span>
-          </li>
-        ))}
-      </ul>
-      {SHOW_DRAFT && <p class="mt-8 text-center text-xs"><span class="draft">{standardsNote} (draft note — not shown in production)</span></p>}
-    </div>
-  </section>
-
   <!-- ============ EQUIPMENT & CONTROLS ============ -->
-  <section class="section" aria-labelledby="equipment-title">
+  <section class="section bg-sage-100" aria-labelledby="equipment-title">
     <div class="container-x">
       <SectionHead id="equipment-title" eyebrow={equipment.eyebrow} title={equipment.title} />
       <div class="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {equipment.items.map((e, i) => (
-          <div class="flex gap-5 rounded-[1.75rem] border border-ink/8 p-7 sm:p-8">
+          <div class="flex min-w-0 flex-col gap-4 rounded-[1.75rem] border border-ink/8 p-6 min-[400px]:flex-row min-[400px]:gap-5 sm:p-8">
             <span class:list={['grid size-14 shrink-0 place-items-center rounded-2xl', accents[i % accents.length]]}><Icon name={e.icon} class="size-7" /></span>
             <div>
               <h3 class="text-xl font-extrabold">{e.title}</h3>
@@ -520,7 +523,7 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
   </section>
 
   <!-- ============ OAKVILLE LOCAL INFORMATION + MAP ============ -->
-  <section class="section bg-sage-100" aria-labelledby="oakville-title">
+  <section class="section bg-ivory-50" aria-labelledby="oakville-title">
     <div class="container-x grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
       <div>
         <SectionHead id="oakville-title" title={oakville.title} />
@@ -543,10 +546,11 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
   </section>
 
   <!-- ============ FAQ ============ -->
-  <section id="faq" class="section" aria-labelledby="faq-title">
+  <section id="faq" class="section bg-sage-100" aria-labelledby="faq-title">
     <div class="container-x grid gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
       <div class="lg:sticky lg:top-32 lg:self-start">
         <SectionHead id="faq-title" eyebrow={faqCopy.eyebrow} title={faqCopy.title} />
+        <div class="mt-10 aspect-[4/3] overflow-hidden rounded-[2rem] shadow-[0_30px_60px_-40px_rgba(46,42,38,.45)]"><Photo image={faqCopy.photo.image} alt={faqCopy.photo.alt} sizes="(min-width: 1024px) 440px, 100vw" /></div>
       </div>
       <div class="space-y-3">
         {faq.map((f, i) => (
@@ -565,7 +569,7 @@ const mapSrc = 'https://www.google.com/maps?q=Oakville,+Ontario,+Canada&z=12&out
   </section>
 
   <!-- ============ FINAL CTA ============ -->
-  <section id="contact" class="section bg-sage-100" aria-labelledby="contact-title">
+  <section id="contact" class="section bg-ivory-50" aria-labelledby="contact-title">
     <div class="container-x grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
       <div class="lg:pt-6">
         <h2 id="contact-title" class="h-section">{finalCta.title}</h2>

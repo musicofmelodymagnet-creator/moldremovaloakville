@@ -57,18 +57,6 @@ export const achievements: { icon: string; value: string | null; draft: string; 
   { icon: 'badge', value: 'IICRC-Trained', draft: '[CREDENTIAL]', label: 'Technicians', image: achIicrc },
 ];
 
-// Professional Standards strip. verified: false → в production скрыто (пункты со * в тексте).
-export const standards = [
-  { icon: 'badge', label: 'Industry-Trained Team', verified: true },
-  { icon: 'shield', label: 'Liability Insurance', verified: true },
-  { icon: 'file', label: 'Written Project Scope', verified: true },
-  { icon: 'fan', label: 'HEPA-Controlled Remediation', verified: true },
-  { icon: 'camera', label: 'Photo Documentation', verified: true },
-  { icon: 'award', label: 'Workmanship Warranty', verified: true },
-  { icon: 'check-circle', label: 'Independent Verification Available', verified: true },
-  { icon: 'hard-hat', label: 'Safety Procedures', verified: true },
-];
-
 // Таблица цен (planning ranges) — от владельца 2026-10-02.
 // price: null → в production вся таблица скрыта (текст раздела остаётся).
 export const pricing: { project: string; price: string | null }[] = [

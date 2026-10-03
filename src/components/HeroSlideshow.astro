@@ -28,6 +28,20 @@ const { slides } = Astro.props;
   document.querySelectorAll<HTMLElement>('[data-hero]').forEach((hero) => {
     const slides = [...hero.querySelectorAll<HTMLElement>('[data-slide]')];
     const phrases = [...hero.querySelectorAll<HTMLElement>('[data-rotate]')];
+    // Каждая фраза — 2 строки; размер подбирается так, чтобы самая длинная строка = 75% ширины фото
+    const box = hero.querySelector<HTMLElement>('[data-rotator]')?.closest<HTMLElement>('.isolate');
+    const fit = () => {
+      if (!box) return;
+      const W = box.clientWidth;
+      phrases.forEach((p) => {
+        const widest = Math.max(...[...p.children].map((c) => (c as HTMLElement).scrollWidth));
+        const px = parseFloat(getComputedStyle(p).fontSize);
+        if (widest > 0) p.style.fontSize = `${((px * 0.75 * W) / widest / W) * 100}cqw`;
+      });
+    };
+    document.fonts.ready.then(fit);
+    if (box) new ResizeObserver(fit).observe(box);
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (slides.length < 2 && phrases.length < 2) return;
 

@@ -106,12 +106,13 @@
   - `src/components/Footer.astro` — все страницы (через Layout)
   - `src/components/QuoteForm.astro` — форма заявки, `variant="hero"` (без email) и `"final"` (с email)
   - `src/components/Icon.astro` — иконки (инлайн SVG)
+  - `src/components/CallWithNote.astro` — кнопка звонка + рукописная пометка со стрелкой (hero, Problems); `GlossCheck.astro` — глянцевая зелёная галочка в стиле эмблем
   - `src/components/Logo.astro`, `PhoneButton.astro` (tel:, скрыт без телефона), `Draft.astro` (плейсхолдер только в dev)
   - `src/components/Photo.astro` (фото / серая заглушка), `HeroSlideshow.astro` (слайдшоу без библиотек)
-  - `src/components/SectionHead.astro` (eyebrow + крупный H2), `MoistureDiagram.astro` (УТП 1), `RemovalCompare.astro` (УТП 2)
+  - `src/components/SectionHead.astro` (eyebrow + крупный H2; `tone="dark"` для тёмных разделов, `wide`, `size="xl"`, `\n` в заголовке = перенос строки), `MoistureDiagram.astro` (УТП 1), `RemovalCompare.astro` (УТП 2)
 
 ## Дизайн
-- Фоны разделов — **только 3**: `bg-ivory-50` (светлый), `bg-sage-100` (шалфейный тинт), `bg-sage-900` (тёмный: полоса достижений, футер, карточка районов). Разделы чередуются ivory/sage. Белый — только поверхность карточек.
+- Фоны разделов — **только 3**: `bg-ivory-50` (светлый), `bg-sage-100` (шалфейный тинт), `bg-sage-900` (тёмный зелёный, как подвал: полоса достижений, раздел Services, футер, карточка районов). **Соседние разделы никогда не одного цвета** — после любой перестановки/удаления раздела проверять чередование (скрипт: фон каждого `main > section` по порядку). Белый — только поверхность карточек.
 - Цвета значков и эмблем — **только 3 варианта**: шалфей, терракота, золото (массивы `accents` / `emblems` в index.astro). Dusty Rose и Soft Taupe из палитры убраны по просьбе владельца.
 - Текст и кнопки — тёмные варианты (`terracotta-700/800`, `sage-800`, `gold-700`) для контраста WCAG AA; основной текст — тёплый графит `ink`.
 - Первый экран: H1 «Mold Removal Oakville» в одну строку (зелёный листок SVG над последней «e»), под ним плашка `hero.badge`; фото 16:9 (слайдшоу без индикатора и ручного листания), внизу фото — фразы `hero.lead` + `hero.rotating`, меняются одновременно со слайдом (общий таймер 3,5 с в HeroSlideshow), фраза выбирается случайно; под фото 6 эмблем `src/assets/emblems/` на белой карточке; справа форма — на десктопе её низ выровнен с низом эмблем (форма растягивается, лишнюю высоту забирает textarea); ниже tagline + рукописная пометка «Speak with an expert» (шрифт `font-hand` = Caveat) со стрелкой к кнопке звонка. Логотип — аватарка `src/assets/brand/mold-removal-oakville-logo.jpg` (из неё же `npm run brand` делает фавиконки, logo.png, og-image.png).
